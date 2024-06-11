@@ -1,0 +1,7 @@
+.custom-calendar-wrapper .unavailable-date {
+  border: 2px solid red;
+ 
+  border-radius: 50%;
+}
+
+

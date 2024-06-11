@@ -1,0 +1,111 @@
+.text
+{
+    font-style: italic;
+    font-family:inherit;
+}
+#h:hover{
+    background-color:#3c857d ;
+    transform: scale(1.2);
+    color: white;
+}
+#Amenities
+{
+    min-height: 800px;
+    width: auto;
+}
+#amenities
+{
+    line-height: 100px;
+text-align: center;
+}
+#amenities1
+{
+text-align: center;
+}
+.card-text
+{
+    font-size: small;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-style: italic;
+}
+.card-title
+{
+    font-style: italic;
+}
+#grid
+{
+    min-height: 1000px;
+    padding: 100px;
+}
+.card:hover{
+    background-color: #d2b48c;
+    color: white;
+    transform: scale(1.1);
+}
+#gh:hover{
+  transform: scale(1.1);
+}
+#gallerydiv
+{
+    min-height: 800px;
+}
+#gallery
+{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.image
+{
+    padding: 20px;
+}
+
+
+
+/*footer*/
+footer {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+.footer-section ul li i {
+  margin-right: 10px;
+
+}
+
+
+#event
+{
+    display: flex;
+}
+.dropdown-item
+{
+    text-align: center;
+}
+.rounded-image {
+    border-radius: 50%;
+    
+}
+
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .animated-text {
+    font-size: 28px;
+    color: #e41818;
+    
+
+    animation: fadeIn 2s ease-in-out;
+  }
+ 
