@@ -7,7 +7,7 @@
   }
   
   #imgbg {
-    background-image: url(C:\Users\Devarshini\my-react-app\public\image\gt11.jpg); /* Adjust the path */
+    /* background-image: url(C:\Users\Devarshini\my-react-app\public\image\gt11.jpg); Adjust the path */
     background-attachment: fixed;
     background-size: cover;
     background-position: center; /* Center the background image */

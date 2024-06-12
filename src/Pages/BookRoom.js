@@ -1,50 +1,93 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import CustomCalendar from './CustomCalendar';
 import './Form.css';
 
 function BookRoom() {
   const navigate = useNavigate();
-  const [totalPrice, setTotalPrice] = useState(60000);
-  const [numGuests, setNumGuests] = useState(50);
-  const [numPersonsNeedingRoom, setNumPersonsNeedingRoom] = useState(10);
-  const [numRoomsNeeded, setNumRoomsNeeded] = useState(1);
-  const [roomType, setRoomType] = useState("AC");
-  const [selectedDates, setSelectedDates] = useState([]);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    contactNumber: '',
+    event: 'Wedding',
+    numGuests: 50,
+    numPersonsNeedingRoom: 10,
+    roomType: 'AC',
+    numRoomsNeeded: 1,
+    numDays: 0,
+    totalPrice: 60000,
+    description: '',
+    selectedDates: []
+  });
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    console.log("formData", formData);
+  }, [formData]);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    navigate("/payment");
+    
+    const data = { ...formData };
+
+    const response = await fetch('http://localhost:5000/api/halls', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+        alert('Reservation submitted successfully!');
+        navigate("/payment");
+    } else {
+        alert('Failed to submit reservation.');
+    }
   };
 
-  const handleNumGuestsChange = (event) => {
-    const guests = parseInt(event.target.value, 10);
-    setNumGuests(guests);
-    calculateTotalPrice(selectedDates.length, guests, numRoomsNeeded, roomType);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+
+    if (name === 'numGuests') {
+      const guests = parseInt(value, 10);
+      calculateTotalPrice(formData.numDays, guests, formData.numRoomsNeeded, formData.roomType);
+    } else if (name === 'numPersonsNeedingRoom') {
+      const personsNeedingRoom = parseInt(value, 10);
+      calculateNumRoomsNeeded(personsNeedingRoom);
+    } else if (name === 'roomType') {
+      calculateTotalPrice(formData.numDays, formData.numGuests, formData.numRoomsNeeded, value);
+    }
   };
 
-  const handleNumPersonsNeedingRoomChange = (event) => {
-    const personsNeedingRoom = parseInt(event.target.value, 10);
-    setNumPersonsNeedingRoom(personsNeedingRoom);
-    calculateNumRoomsNeeded(personsNeedingRoom);
-    calculateTotalPrice(selectedDates.length, numGuests, numRoomsNeeded, roomType);
-  };
-
-  const handleRoomTypeChange = (event) => {
-    const selectedRoomType = event.target.value;
-    setRoomType(selectedRoomType);
-    calculateTotalPrice(selectedDates.length, numGuests, numRoomsNeeded, selectedRoomType);
+  const setSelectedDates = (dates) => {
+    setFormData(prevData => ({
+      ...prevData,
+      selectedDates: dates,
+      numDays: dates.length
+    }));
+    calculateTotalPrice(dates.length, formData.numGuests, formData.numRoomsNeeded, formData.roomType);
   };
 
   const calculateNumRoomsNeeded = (personsNeedingRoom) => {
     const roomsNeeded = Math.ceil(personsNeedingRoom / 4); // Assuming each room can accommodate up to 4 persons
-    setNumRoomsNeeded(roomsNeeded);
+    setFormData(prevData => ({
+      ...prevData,
+      numRoomsNeeded: roomsNeeded
+    }));
+    calculateTotalPrice(formData.numDays, formData.numGuests, roomsNeeded, formData.roomType);
   };
 
   const calculateTotalPrice = (days, guests, roomsNeeded, selectedRoomType) => {
     const pricePerRoomPerDay = selectedRoomType === "AC" ? 500 : 200;
     const totalPrice = (days * pricePerRoomPerDay * roomsNeeded) + (days * 50000);
-    setTotalPrice(totalPrice);
+    setFormData(prevData => ({
+      ...prevData,
+      totalPrice: totalPrice
+    }));
   };
 
   return (
@@ -57,20 +100,51 @@ function BookRoom() {
             <div className="row g-3">
               <div className="col-md-6">
                 <label htmlFor="inputfirstname" className="form-label">First Name*</label>
-                <input type="text" className="form-control" id="inputfirstname" required />
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  id="inputfirstname" 
+                  name="firstName" 
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
               <div className="col-md-6">
                 <label htmlFor="inputlastname" className="form-label">Last Name*</label>
-                <input type="text" className="form-control" id="inputlastname" />
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  id="inputlastname" 
+                  name="lastName" 
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
               <div className="col-md-12">
                 <label htmlFor="inputnum" className="form-label">Contact Number*</label>
-                <input type="tel" className="form-control" id="inputnum" required />
+                <input 
+                  type="tel" 
+                  className="form-control" 
+                  id="inputnum" 
+                  name="contactNumber" 
+                  value={formData.contactNumber}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
-              <CustomCalendar selectedDates={selectedDates} setSelectedDates={setSelectedDates} />
+              <CustomCalendar selectedDates={formData.selectedDates} setSelectedDates={setSelectedDates} />
               <div className="col-md-6">
                 <label htmlFor="selectevent" className="form-label">Select Event*</label>
-                <select name="Event" id="event" className="form-control">
+                <select 
+                  name="event" 
+                  id="event" 
+                  className="form-control" 
+                  value={formData.event}
+                  onChange={handleChange}
+                  required
+                >
                   <option value="Wedding">Wedding</option>
                   <option value="Engagement">Engagement</option>
                   <option value="Reception">Reception</option>
@@ -89,34 +163,92 @@ function BookRoom() {
               </div>
               <div className="col-md-6">
                 <label htmlFor="numGuests" className="form-label">Number of Guests*</label>
-                <input type="number" className="form-control" id="numGuests" min="1" value={numGuests} onChange={handleNumGuestsChange} required />
+                <input 
+                  type="number" 
+                  className="form-control" 
+                  id="numGuests" 
+                  name="numGuests" 
+                  min="1" 
+                  value={formData.numGuests} 
+                  onChange={handleChange} 
+                  required 
+                />
               </div>
               <div className="col-md-6">
                 <label htmlFor="numPersonsNeedingRoom" className="form-label">Number of Persons Needing Room*</label>
-                <input type="number" className="form-control" id="numPersonsNeedingRoom" min="1" value={numPersonsNeedingRoom} onChange={handleNumPersonsNeedingRoomChange} required />
+                <input 
+                  type="number" 
+                  className="form-control" 
+                  id="numPersonsNeedingRoom" 
+                  name="numPersonsNeedingRoom" 
+                  min="1" 
+                  value={formData.numPersonsNeedingRoom} 
+                  onChange={handleChange} 
+                  required 
+                />
               </div>
               <div className="col-md-6">
                 <label htmlFor="roomType" className="form-label">Room Type*</label>
-                <select className="form-control" id="roomType" value={roomType} onChange={handleRoomTypeChange} required>
+                <select 
+                  className="form-control" 
+                  id="roomType" 
+                  name="roomType" 
+                  value={formData.roomType} 
+                  onChange={handleChange} 
+                  required
+                >
                   <option value="AC">AC</option>
                   <option value="Non-AC">Non-AC</option>
                 </select>
               </div>
               <div className="col-md-6">
                 <label htmlFor="numRoomsNeeded" className="form-label">Number of Rooms Needed*</label>
-                <input type="number" className="form-control" id="numRoomsNeeded" min="1" value={numRoomsNeeded} readOnly required />
+                <input 
+                  type="number" 
+                  className="form-control" 
+                  id="numRoomsNeeded" 
+                  name="numRoomsNeeded" 
+                  min="1" 
+                  value={formData.numRoomsNeeded} 
+                  readOnly 
+                  required 
+                />
               </div>
               <div className="col-md-6">
                 <label htmlFor="numDays" className="form-label">Number of Days*</label>
-                <input type="number" className="form-control" id="numDays" min="1" value={selectedDates.length} readOnly required />
+                <input 
+                  type="number" 
+                  className="form-control" 
+                  id="numDays" 
+                  name="numDays" 
+                  min="1" 
+                  value={formData.numDays} 
+                  readOnly 
+                  required 
+                />
               </div>
               <div className="col-md-6">
                 <label htmlFor="price" className="form-label">Total Price (₹)</label>
-                <input type="number" className="form-control" id="price" value={totalPrice} readOnly />
+                <input 
+                  type="number" 
+                  className="form-control" 
+                  id="price" 
+                  name="totalPrice" 
+                  value={formData.totalPrice} 
+                  readOnly 
+                />
               </div>
               <div className="col-12">
                 <label htmlFor="inputAddress2" className="form-label">Description</label>
-                <textarea className="form-control" id="inputAddress2" placeholder="Description" rows="4"></textarea>
+                <textarea 
+                  className="form-control" 
+                  id="inputAddress2" 
+                  name="description" 
+                  placeholder="Description" 
+                  rows="4" 
+                  value={formData.description}
+                  onChange={handleChange}
+                ></textarea>
               </div>
               <div className="col-12">
                 <button type="submit" className="btn btn-primary" id="submit1">Pay Now</button>
