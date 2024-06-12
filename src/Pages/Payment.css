@@ -1,48 +1,99 @@
-/* Payment.css */
 
-.payment-container {
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
-    background-color: aquamarine;
-   
-  }
+.thank-you-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-image: url('https://img.freepik.com/premium-photo/abstract-background-beautiful-design_988987-2640.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.content-box {
+  background-color: #fff; /* White background for content box with opacity */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow effect */
+}
+
+.animated-box {
+  border: 2px solid #3498db; /* Border around animated box */
+  border-radius: 10px;
+  overflow: hidden; /* Hide overflow content */
+}
+p,h1{
+  align-content: center;
+}
+
+.thank-you-content {
+  padding: 20px;
+}
+.contact-message {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;/* Stylish font for contact message */
+  font-size: 24px;
+  font-style: italic;
+  color: #2e07db; /* Text color */
+}
+
+.thank-you-heading {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; /* Custom font for heading */
+  font-size: 24px;
   
-  .payment-form {
-    margin-top: 20px;
-  }
-  
-  .payment-form h3 {
-    margin-bottom: 10px;
-  }
-  
-  .payment-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .payment-form input[type="text"],
-  .payment-form input[type="email"],
-  .payment-form input[type="tel"] {
-    width: calc(100% - 20px);
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .payment-form button[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .payment-form button[type="submit"]:hover {
-    background-color: #45a049;
-  }
-  
+}
+
+.thank-you-text {
+  font-family: 'Arial', sans-serif; /* Custom font for text */
+  font-size: 18px;
+  color: #555; /* Text color */
+}
+
+.additional-content {
+  font-family: 'Arial', sans-serif; /* Custom font for additional content */
+  font-size: 16px;
+  color: #777; /* Text color */
+}
+
+.thank-you-image {
+  width: 400px; /* Adjust image width */
+  height: auto;
+  border-radius: 10px;
+  margin-top: 20px; /* Add margin */
+  justify-content: center;
+  padding-left: 25%;
+ 
+
+}
+.thank-you-heading {
+font-family: 'EB Garamond', serif; /* Classic font for heading */
+font-size: 24px;
+color: #333; /* Text color */
+}
+
+.thank-you-text {
+font-family: 'EB Garamond', serif; /* Classic font for text */
+font-size: 18px;
+color: #555; /* Text color */
+}
+
+.additional-content {
+font-family: 'EB Garamond', serif; /* Classic font for additional content */
+font-size: 16px;
+color: #777; /* Text color */
+}
+.thank-you-heading {
+  font-family: 'Montserrat', sans-serif; /* Stylish font for heading */
+  font-size: 24px;
+  color: #333; /* Text color */
+}
+
+.thank-you-text {
+  font-family: 'Montserrat', sans-serif; /* Stylish font for text */
+  font-size: 18px;
+  color: #555; /* Text color */
+}
+
+.additional-content {
+  font-family: 'Montserrat', sans-serif; /* Stylish font for additional content */
+  font-size: 16px;
+  color: #777; /* Text color */
+}

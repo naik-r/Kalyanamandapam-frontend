@@ -47,7 +47,7 @@ function Form() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify( )
+        body: JSON.stringify(bookingData )
       });
 
       if (response.ok) {
@@ -143,7 +143,7 @@ function Form() {
                 <textarea className="form-control" id="description" placeholder="Description" rows="4" value={formData.description} onChange={handleInputChange}></textarea>
               </div>
               <div className="col-12">
-                <button type="submit" className="btn btn-primary" id="submit1">Pay Now</button>
+                <button type="submit" className="btn btn-primary" id="submit1">Confirm</button>
               </div>
             </div>
           </form>
