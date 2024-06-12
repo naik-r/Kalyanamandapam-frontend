@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import './CustomCalendar.css'; // Custom CSS for styling available and unavailable dates
+import './CustomCalendar.css'; // Custom CSS for styling available andunavailable dates
 
 function CustomCalendar({ selectedDates, setSelectedDates }) {
   const [unavailableDates, setUnavailableDates] = useState([]);
@@ -22,23 +22,30 @@ function CustomCalendar({ selectedDates, setSelectedDates }) {
       selectedDate.toDateString() === date.toDateString()
     );
 
+    let updatedSelectedDates;
     if (index !== -1) {
       // Date already selected, remove it
-      const updatedSelectedDates = [...selectedDates];
+      updatedSelectedDates = [...selectedDates];
       updatedSelectedDates.splice(index, 1);
       setSelectedDates(updatedSelectedDates);
 
       // Remove from unavailable dates
       setUnavailableDates(
         unavailableDates.filter(
-          unavailableDate => unavailableDate.toDateString() !== date.toDateString()
+          unavailableDate => unavailableDate.toDateString() !==
+date.toDateString()
         )
       );
     } else {
       // Date not selected, add it
-      setSelectedDates([...selectedDates, date]);
+      updatedSelectedDates = [...selectedDates, date];
+      setSelectedDates(updatedSelectedDates);
       setUnavailableDates([...unavailableDates, date]);
     }
+
+    // Log the selected dates to the console
+    console.log('Selected dates:', updatedSelectedDates.map(d =>
+d.toDateString()));
   };
 
   const today = new Date();
