@@ -1,7 +1,7 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-
+import Footer from "./Pages/Footer";
 import './App.css';
 import Gallery from "./Pages/Gallery";
 import Home from "./Pages/Home";
@@ -27,7 +27,7 @@ function App() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>
-        
+        <Footer/>
         
       
       

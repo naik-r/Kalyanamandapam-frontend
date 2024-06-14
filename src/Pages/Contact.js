@@ -1,6 +1,19 @@
 import React from 'react';
 import './Contact.css';
 function Contact() {
+    const handleClick = () => {
+        const name = document.getElementById('name').value;
+        
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const message = document.getElementById('message').value;
+    
+        console.log('Name:', name);
+       
+        console.log('Phone Number:', phoneNumber);
+        console.log('Message:', message);
+    
+        alert('Your message has been sent!');
+      };
   return (
     <div style={{backgroundColor:'#f0f0f0'}}>
     <section class="contact_us">
@@ -12,56 +25,37 @@ function Contact() {
                         <div class="col-md-10">
                             <div class="contact_form_inner">
                                 <div class="contact_field">
-                                    <h3>Contact Us</h3>
-                                    <p>Feel Free to
-contact us any time. We will get back to you as soon as we can!.</p>
-                                    <input type="text"
-class="form-control form-group" placeholder="Name" />
-                                    <input type="text"
-class="form-control form-group" placeholder="Email" />
-  <input type="tel"
-class="form-control form-group" placeholder="phone number" />
-                                    <textarea
-class="form-control form-group" placeholder="Message"></textarea>
-                                    <button
-class="contact_form_submit">Send</button>
+                                    <h3>ContactUs</h3>
+                                    <p>Feel Free to contact us any time. We will get back to you as soon as we can!.</p>
+                                    <input type="text" id="name" class="form-control form-group" placeholder="Name" />
+                                    
+                                    <input type="tel" id="phoneNumber" class="form-control form-group" placeholder="phone number" />
+                                    <textarea id="message" class="form-control form-group" placeholder="Message"></textarea>
+                                    <button class="contact_form_submit" onClick={handleClick} >Send</button>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div
-class="right_conatct_social_icon d-flex align-items-end">
-                                <div
-class="socil_item_inner d-flex">
-                                    <li><a href="/"><i
-class="fab fa-facebook-square"></i></a></li>
-                                    <li><a href="/"><i
-class="fab fa-instagram"></i></a></li>
-                                    <li><a href="/"><i
-class="fab fa-twitter"></i></a></li>
+                            <div class="right_conatct_social_icon d-flex align-items-end">
+                                <div class="socil_item_inner d-flex">
+                                    <li><a href="/"><i class="fab fa-facebook-square"></i></a></li>
+                                    <li><a href="/"><i class="fab fa-instagram"></i></a></li>
+                                    <li><a href="/"><i class="fab fa-twitter"></i></a></li>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="contact_info_sec">
                         <h4>Contact Info</h4>
-                        <div class="d-flex info_single
-align-items-center">
+                        <div class="d-flex info_single align-items-center">
                             <i class="fas fa-headset"></i>
                             <span>+91 94935 72522</span>
                         </div>
-                        <div class="d-flex info_single
-align-items-center">
-                            <i class="fas
-fa-envelope-open-text"></i>
+                        <div class="d-flex info_single align-items-center">
+                            <i class="fas fa-envelope-open-text"></i>
                             <span>info@gangaramfunctionhall.com</span>
                         </div>
-                        <div class="d-flex info_single
-align-items-center">
-                            <i class="fas fa-map-marked-alt"></i>
-                            <span></span>
-                        </div>
-
+                
                     </div>
                 </div>
             </div>
