@@ -3,22 +3,20 @@ import { useNavigate } from "react-router-dom";
 import CustomCalendar from './CustomCalendar';
 import './Form.css';
 
-function FormWithoutRooms() {
+function FormWithRooms() {
   const navigate = useNavigate();
-  const [selectedDates, setSelectedDates] = useState([]);
-  const [numGuests, setNumGuests] = useState(50);
   const [numDays, setNumDays] = useState(1); // Initialize numDays with default value
-  const [totalPrice, setTotalPrice] = useState(50000);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [numGuests, setNumGuests] = useState(50);
+  const [selectedDates, setSelectedDates] = useState([]);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     contactNumber: '',
-    event: 'Wedding',
     description: '',
-    services: {
-      catering: false,
-      decoration: false
-    }
+    numPersonsNeedingRoom: 10,
+    roomType: 'AC',
+    numRoomsNeeded: 1,
   });
 
   // useEffect to update numDays and calculate totalPrice
@@ -26,16 +24,15 @@ function FormWithoutRooms() {
     if (selectedDates.length > 0) {
       const dayDiff = selectedDates.length;
       setNumDays(dayDiff); // Update numDays state
-      calculateTotalPrice(dayDiff, numGuests, formData.services);
+      calculateTotalPrice(dayDiff, numGuests, formData.numRoomsNeeded, formData.roomType);
     }
-  }, [selectedDates, numGuests, formData.services]);
+  }, [selectedDates, numGuests, formData.numRoomsNeeded, formData.roomType]);
 
   // Function to calculate total price
-  const calculateTotalPrice = (days, guests, services) => {
-    const hallCost = days * 50000;
-    const serviceCost = (services.catering ? 30000 : 0) + (services.decoration ? 20000 : 0); // Adjust service costs as needed
-    const totalPrice = hallCost + serviceCost;
-    setTotalPrice(totalPrice); // Update totalPrice state
+  const calculateTotalPrice = (days, guests, roomsNeeded, selectedRoomType) => {
+    const pricePerRoomPerDay = selectedRoomType === "AC" ? 1000 : 500;
+    const roomCost = days * pricePerRoomPerDay * roomsNeeded;
+    setTotalPrice(roomCost); // Update totalPrice state with only room cost
   };
 
   // Handle form submission
@@ -51,8 +48,7 @@ function FormWithoutRooms() {
     };
 
     try {
-      const url = 'http://localhost:5000/api/onlyhall'; // Assuming API endpoint for function hall booking without rooms
-      const response = await fetch(url, {
+      const response = await fetch('http://localhost:5000/api/halls', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -74,24 +70,32 @@ function FormWithoutRooms() {
 
   // Handle input changes
   const handleInputChange = (event) => {
-    const { id, value, type, checked } = event.target;
+    const { id, value } = event.target;
 
-    if (type === 'checkbox') {
-      setFormData(prevState => ({
-        ...prevState,
-        services: {
-          ...prevState.services,
-          [id]: checked
-        }
-      }));
-      calculateTotalPrice(numDays, numGuests, {
-        ...formData.services,
-        [id]: checked
-      });
-    } else if (id === 'numGuests') {
+    if (id === 'numGuests') {
       const guests = parseInt(value, 10);
       setNumGuests(guests); // Update numGuests state
-      calculateTotalPrice(numDays, guests, formData.services); // Recalculate totalPrice
+      calculateTotalPrice(numDays, guests, formData.numRoomsNeeded, formData.roomType); // Recalculate totalPrice
+    } else if (id === 'numPersonsNeedingRoom') {
+      const personsNeedingRoom = parseInt(value, 10);
+      setFormData(prevState => ({
+        ...prevState,
+        [id]: personsNeedingRoom
+      }));
+      calculateNumRoomsNeeded(personsNeedingRoom); // Recalculate numRoomsNeeded and totalPrice
+    } else if (id === 'roomType') {
+      setFormData(prevState => ({
+        ...prevState,
+        [id]: value
+      }));
+      calculateTotalPrice(numDays, numGuests, formData.numRoomsNeeded, value); // Recalculate totalPrice
+    } else if (id === 'numRoomsNeeded') {
+      const roomsNeeded = parseInt(value, 10);
+      setFormData(prevState => ({
+        ...prevState,
+        numRoomsNeeded: roomsNeeded
+      }));
+      calculateTotalPrice(numDays, numGuests, roomsNeeded, formData.roomType); // Recalculate totalPrice
     } else {
       setFormData(prevState => ({
         ...prevState,
@@ -100,12 +104,22 @@ function FormWithoutRooms() {
     }
   };
 
+  // Calculate number of rooms needed based on persons needing room
+  const calculateNumRoomsNeeded = (personsNeedingRoom) => {
+    const roomsNeeded = Math.ceil(personsNeedingRoom / 4); // Assuming each room can accommodate up to 4 persons
+    setFormData(prevData => ({
+      ...prevData,
+      numRoomsNeeded: roomsNeeded
+    }));
+    calculateTotalPrice(numDays, numGuests, roomsNeeded, formData.roomType); // Recalculate totalPrice
+  };
+
   return (
     <div id="imgbg" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/image/gt2.jpg)` }}>
       <div id="avail" className="containerf">
         <div id="form" className="form-container">
-          <h2 className="form-title">Booking Function Hall </h2>
-
+          <h2 className="form-title">Booking Rooms</h2>
+          
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
               <div className="col-md-6">
@@ -124,40 +138,43 @@ function FormWithoutRooms() {
                 selectedDates={selectedDates}
                 setSelectedDates={setSelectedDates}
               />
+              
               <div className="col-md-6">
-                <label htmlFor="event" className="form-label">Select Event*</label>
-                <select id="event" className="form-control" value={formData.event} onChange={handleInputChange}>
-                  <option value="Wedding">Wedding</option>
-                  <option value="Engagement">Engagement</option>
-                  <option value="Reception">Reception</option>
-                  <option value="Birthday party">Birthday party</option>
-                  <option value="Meeting">Meeting</option>
-                  <option value="Baby Shower">Baby Shower</option>
-                </select>
-              </div>
-              <div className="col-md-12">
-                <label htmlFor="services" className="form-label">Our Services</label>
-                <div className="form-check">
-                  <input className="form-check-input" type="checkbox" id="catering" checked={formData.services.catering} onChange={handleInputChange} />
-                  <label className="form-check-label" htmlFor="catering">Catering</label>
-                </div>
-                <div className="form-check">
-                  <input className="form-check-input" type="checkbox" id="decoration" checked={formData.services.decoration} onChange={handleInputChange} />
-                  <label className="form-check-label" htmlFor="decoration">Decoration</label>
-                </div>
-              </div>
-              <div className="col-md-6">
-                <label htmlFor="numGuests" className="form-label">Number of Guests*</label>
+                <label htmlFor="numPersonsNeedingRoom" className="form-label">Number of Persons Needing Room*</label>
                 <input
                   type="number"
                   className="form-control"
-                  id="numGuests"
-                  min="1"
-                  value={numGuests}
+                  id="numPersonsNeedingRoom"
+                  value={formData.numPersonsNeedingRoom}
                   onChange={handleInputChange}
                   required
                 />
               </div>
+              <div className="col-md-6">
+                <label htmlFor="roomType" className="form-label">Room Type*</label>
+                <select
+                  className="form-control"
+                  id="roomType"
+                  value={formData.roomType}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="AC">AC</option>
+                  <option value="Non-AC">Non-AC</option>
+                </select>
+              </div>
+              <div className="col-md-6">
+                <label htmlFor="numRoomsNeeded" className="form-label">Number of Rooms</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="numRoomsNeeded"
+                  value={formData.numRoomsNeeded}
+                  readOnly
+                  required
+                />
+              </div>
+            
               <div className="col-md-6">
                 <label htmlFor="numDays" className="form-label">Number of Days</label>
                 <input type="number" className="form-control" id="numDays" value={numDays} readOnly />
@@ -184,4 +201,4 @@ function FormWithoutRooms() {
   );
 }
 
-export default FormWithoutRooms;
+export default FormWithRooms;

@@ -3,5 +3,33 @@
  
   border-radius: 50%;
 }
-
-
+.custom-calendar-wrapper{
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.input-container {
+  position: relative;
+  width: 100%;
+}
+.calendar-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 10px; /* Adjust as needed */
+  cursor: pointer;
+  z-index: 2; /* Ensure the icon is above the input */
+}
+.form-control {
+  width: 100%;
+  padding-right: 30px; /* Reserve space for the icon */
+  position: relative;
+  z-index: 1; /* Ensure the input is above the icon */
+}
+.react-datepicker-wrapper {
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  left: 0;
+  z-index: 10; /* Ensure the calendar dropdown is above other content */
+}

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { FaCalendarAlt } from 'react-icons/fa';
 import './CustomCalendar.css'; // Custom CSS for styling available andunavailable dates
 
 function CustomCalendar({ selectedDates, setSelectedDates }) {
-  const [unavailableDates, setUnavailableDates] = useState([]);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+const [unavailableDates, setUnavailableDates] = useState([]);
 
   const isUnavailableDate = date => {
     return unavailableDates.some(
@@ -47,6 +49,10 @@ date.toDateString()
     console.log('Selected dates:', updatedSelectedDates.map(d =>
 d.toDateString()));
   };
+  const toggleCalendar = () => {
+    setCalendarOpen(!calendarOpen);
+  };
+
 
   const today = new Date();
   const threeMonthsLater = new Date();
@@ -58,7 +64,21 @@ d.toDateString()));
         Select Dates*
       </label>
       <div className="custom-calendar-wrapper">
-        <DatePicker
+      <div className="input-container">
+          <input
+            type="text"
+            id="dates"
+            className="form-control"
+            placeholder="Select Dates"
+            readOnly
+            onClick={toggleCalendar}
+          />
+          <div className="calendar-icon" onClick={toggleCalendar}>
+            <FaCalendarAlt />
+          </div>
+        </div>
+          {calendarOpen && (
+           <DatePicker
           selected={null}
           onChange={handleDateChange}
           dayClassName={date => getDateClass(date)}
@@ -67,6 +87,7 @@ d.toDateString()));
           inline
           required
         />
+          )}
       </div>
     </div>
   );
