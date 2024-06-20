@@ -1,66 +1,71 @@
-.text
-{
-    font-style: italic;
-    font-family:inherit;
+.text {
+    font-style: normal;
+    font-family: 'Times New Roman', Times, serif;
 }
-#h:hover{
-    background-color:#3c857d ;
+
+#h:hover {
+    background-color: #3c857d;
     transform: scale(1.2);
     color: white;
 }
-#Amenities
-{
+
+#Amenities {
     min-height: 800px;
     width: auto;
+    background-color: #f0f0f0;
+    padding: 50px 0; /* Add some padding for spacing */
 }
-#amenities
-{
-    line-height: 100px;
-text-align: center;
+
+#amenities1 {
+    line-height: 50px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 0; /* Remove margin-bottom */
+    background-color: rgb(234, 225, 225); /* Change this to your desired background color */
+    color: #eb2d0b; /* Change this to your desired text color */
+    padding: 10px; /* Add some padding for better appearance */
+    border-radius: 5px; /* Optional: add border-radius for rounded corners */
 }
-#amenities1
-{
-text-align: center;
-}
-.card-text
-{
+
+.card-text {
     font-size: small;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-style: italic;
 }
-.card-title
-{
+
+.card-title {
     font-style: italic;
 }
-#grid
-{
+
+#grid {
     min-height: 1000px;
     padding: 100px;
+    padding-bottom: 0; /* Remove bottom padding */
 }
-.card:hover{
+
+.card:hover {
     background-color: #d2b48c;
     color: white;
     transform: scale(1.1);
 }
-#gh:hover{
-  transform: scale(1.1);
+
+#gh:hover {
+    transform: scale(1.1);
 }
-#gallerydiv
-{
+
+#gallerydiv {
     min-height: 800px;
 }
-#gallery
-{
+
+#gallery {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
 }
-.image
-{
+
+.image {
     padding: 20px;
 }
-
-
 
 /*footer*/
 footer {
@@ -68,44 +73,41 @@ footer {
     color: white;
     padding: 20px;
     text-align: center;
+    margin-top: 0; /* Reduce top margin to zero */
 }
+
 .footer-section ul {
-  list-style: none;
-  padding: 0;
+    list-style: none;
+    padding: 0;
 }
+
 .footer-section ul li i {
-  margin-right: 10px;
-
+    margin-right: 10px;
 }
 
-
-#event
-{
+#event {
     display: flex;
 }
-.dropdown-item
-{
+
+.dropdown-item {
     text-align: center;
 }
+
 .rounded-image {
     border-radius: 50%;
-    
 }
 
 @keyframes fadeIn {
     from {
-      opacity: 0;
+        opacity: 0;
     }
     to {
-      opacity: 1;
+        opacity: 1;
     }
-  }
-  
-  .animated-text {
+}
+
+.animated-text {
     font-size: 28px;
     color: #e41818;
-    
-
     animation: fadeIn 2s ease-in-out;
-  }
- 
+}

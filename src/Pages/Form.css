@@ -1,6 +1,5 @@
 /* Background and Container */
 #imgbg {
-
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
@@ -26,31 +25,31 @@
 
 /* Form Title */
 .form-title {
-  font-family: 'Pacifico', cursive; /* Change font to something more decorative */
+  font-family: 'Pacifico', cursive;
   text-align: center;
   font-size: 24px;
   font-weight: bold;
-  color: #f50e0e; /* Golden color */
+  color: #f50e0e;
   margin-bottom: 20px;
 }
 
 /* Form Labels */
 .form-label {
   font-weight: bold;
-  color: #3c857d ; /* Golden color */
+  color: #3c857d;
 }
 
 /* Form Controls */
 .form-control {
   margin-bottom: 15px;
-  border: 2px solid #DAA520; /* Golden border */
+  border: 2px solid #DAA520;
   border-radius: 4px;
   padding: 10px;
 }
 
 .form-control:focus {
-  border-color: #FFD700; /* Bright golden color */
-  box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); /* Bright golden shadow */
+  border-color: #FFD700;
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
 }
 
 /* Buttons */
@@ -58,7 +57,7 @@
   display: block;
   width: 100%;
   padding: 12px;
-  background-color: #DAA520; /* Golden background */
+  background-color: #DAA520;
   color: white;
   border: none;
   border-radius: 5px;
@@ -71,8 +70,8 @@
 }
 
 .btn:hover {
-  background-color: #B8860B; /* Darker golden */
-  transform: scale(1.05); /* Slightly larger on hover */
+  background-color: #B8860B;
+  transform: scale(1.05);
 }
 
 /* Checkboxes */
@@ -95,22 +94,57 @@ input[type="checkbox"] + label:before {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  border: 2px solid #DAA520; /* Golden border */
+  border: 2px solid #DAA520;
   background-color: #fff;
   border-radius: 3px;
 }
 input[type="checkbox"]:checked + label:before {
-  content: "\2713"; /* Checkmark */
+  content: "\2713";
   font-size: 14px;
   text-align: center;
   line-height: 18px;
-  color: #fff; /* Checkmark color */
-  background-color: #DAA520; /* Golden background */
+  color: #fff;
+  background-color: #DAA520;
+}
+
+/* Radio Buttons */
+input[type="radio"] {
+  display: none;
+}
+input[type="radio"] + label {
+  display: inline-block;
+  cursor: pointer;
+  padding-left: 25px;
+  position: relative;
+  font-weight: bold;
+  color: #3c857d;
+}
+input[type="radio"] + label:before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 2px solid #DAA520;
+  background-color: #fff;
+  border-radius: 50%;
+}
+input[type="radio"]:checked + label:before {
+  content: "\2022";
+  font-size: 18px;
+  text-align: center;
+  line-height: 18px;
+  color: #DAA520;
+  background-color: #DAA520;
 }
 
 /* List Group Items */
 .list-group-item {
-  background-color: #FFF8DC; /* Cornsilk background */
+  background-color: #FFF8DC;
   border: none;
   padding: 12px 20px;
   border-radius: 5px;
@@ -121,7 +155,7 @@ input[type="checkbox"]:checked + label:before {
 }
 
 .list-group-item:hover {
-  background-color: #DAA520; /* Golden background on hover */
+  background-color: #DAA520;
   color: white;
 }
 
@@ -129,7 +163,7 @@ input[type="checkbox"]:checked + label:before {
 .section-title {
   font-size: 18px;
   font-weight: bold;
-  color: #DAA520; /* Golden color */
+  color: #DAA520;
   margin-bottom: 10px;
 }
 
@@ -138,13 +172,13 @@ input[type="checkbox"]:checked + label:before {
   display: none;
   text-align: center;
   padding: 20px;
-  border: 1px solid #DAA520; /* Golden border */
-  background-color: #FFF8DC; /* Cornsilk background */
+  border: 1px solid #DAA520;
+  background-color: #FFF8DC;
   border-radius: 10px;
   margin-top: 20px;
   font-family: 'Roboto, sans-serif';
   font-size: 14px;
-  color: #DAA520; /* Golden color */
+  color: #DAA520;
 }
 
 /* Form Section Wrapper */
@@ -158,13 +192,13 @@ input[type="checkbox"]:checked + label:before {
 
 /* Links */
 a {
-  color: #DAA520; /* Golden link color */
+  color: #DAA520;
   text-decoration: none;
   transition: color 0.3s;
 }
 
 a:hover {
-  color: #B8860B; /* Darker golden on hover */
+  color: #B8860B;
 }
 
 /* Responsive Adjustments */
@@ -185,4 +219,7 @@ a:hover {
   .list-group-item {
     padding: 10px 15px;
   }
+}
+.space{
+  margin-top: 50px;
 }

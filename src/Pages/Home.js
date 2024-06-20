@@ -44,8 +44,8 @@ function Home(){
 
 
 <div id="Amenities">
-<h4 id="amenities" className="text">Feel that Best Amenities</h4>
-<h2 id="amenities1" className="text">Go for the Best Event Hall in Tirupati</h2>
+<h1 id="amenities1" className="text"><strong>Amenities</strong></h1>
+
 
 <div id="grid">
 <div className="row row-cols-1 row-cols-md-3 g-4">
