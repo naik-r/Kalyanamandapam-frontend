@@ -6,23 +6,24 @@ import './Form.css'; // Assuming you have saved the CSS in a file named Form.css
 function CombinedForm() {
   const navigate = useNavigate();
   const [selectedDates, setSelectedDates] = useState([]);
-  const [numGuests, setNumGuests] = useState(50);
-  const [numDays, setNumDays] = useState(1);
+  const [numGuests, setNumGuests] = useState();
+  const [numDays, setNumDays] = useState();
   const [totalPrice, setTotalPrice] = useState(50000);
-  const [withRooms, setWithRooms] = useState(false);
+  const [withRooms, setWithRooms] = useState(null); // Initially unselected
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     contactNumber: '',
-    event: 'Wedding',
+    event: '',
     description: '',
     services: {
       catering: false,
       decoration: false
     },
-    numPersonsNeedingRoom: 10,
+    numPersonsNeedingRoom: '',
     roomType: 'AC',
-    numRoomsNeeded: 1,
+    numRoomsNeeded: 0,
     selectedRooms: [] // Added selectedRooms state for room selection
   });
 
@@ -103,7 +104,9 @@ function CombinedForm() {
       const personsNeedingRoom = parseInt(value, 10);
       setFormData(prevState => ({
         ...prevState,
-        [id]: personsNeedingRoom
+        [id]: personsNeedingRoom,
+        numRoomsNeeded: Math.ceil(personsNeedingRoom / 2), // Update numRoomsNeeded
+        selectedRooms: [] // Reset selected rooms
       }));
       calculateNumRoomsNeeded(personsNeedingRoom);
     } else if (id === 'roomType') {
@@ -132,41 +135,43 @@ function CombinedForm() {
     const roomsNeeded = Math.ceil(personsNeedingRoom / 2);
     setFormData(prevData => ({
       ...prevData,
-      numRoomsNeeded: roomsNeeded
+      numRoomsNeeded: roomsNeeded,
+      selectedRooms: [] // Reset selected rooms when the number of rooms needed changes
     }));
     calculateTotalPrice(numDays, numGuests, formData.services, roomsNeeded, formData.roomType);
   };
 
   // Handle room selection
   const handleRoomSelection = (roomNumber) => {
-    const { selectedRooms } = formData;
+    const { selectedRooms, numRoomsNeeded } = formData;
     let updatedSelectedRooms;
-  
+
     if (selectedRooms.includes(roomNumber)) {
       // Remove room number if already selected
       updatedSelectedRooms = selectedRooms.filter(room => room !== roomNumber);
-    } else if (selectedRooms.length < 10) {
-      // Add room number if less than 10 rooms selected
+    } else if (selectedRooms.length < numRoomsNeeded) {
+      // Add room number if less than numRoomsNeeded rooms selected
       updatedSelectedRooms = [...selectedRooms, roomNumber];
     } else {
       // Already at max rooms selected
       updatedSelectedRooms = selectedRooms;
     }
-  
+
     // Update formData state with updated selected rooms
     setFormData(prevState => ({
       ...prevState,
       selectedRooms: updatedSelectedRooms
     }));
-  
+
     // Log selected rooms to console
     console.log("Selected Rooms:", updatedSelectedRooms);
   };
+
   return (
     <div id="imgbg" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/image/gt2.jpg)` }}>
       <div id="avail" className="containerf">
         <div id="form" className="form-container">
-          <h2 className="form-title">Booking Function Hall</h2>
+          <h2 className="form-title"> Function Hall Booking</h2>
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
               <div className="col-md-6">
@@ -185,17 +190,24 @@ function CombinedForm() {
                 selectedDates={selectedDates}
                 setSelectedDates={setSelectedDates}
               />
-              <div className="col-md-6">
-                <label htmlFor="event" className="form-label">Select Event*</label>
-                <select id="event" className="form-control" value={formData.event} onChange={handleInputChange}>
-                  <option value="Wedding">Wedding</option>
-                  <option value="Engagement">Engagement</option>
-                  <option value="Reception">Reception</option>
-                  <option value="Birthday party">Birthday party</option>
-                  <option value="Meeting">Meeting</option>
-                  <option value="Baby Shower">Baby Shower</option>
-                </select>
-              </div>
+            <div className="col-md-6">
+  <label htmlFor="event" className="form-label">Select Event*</label>
+  <select
+    id="event"
+    className="form-control"
+    value={formData.event}
+    onChange={handleInputChange}
+  >
+    <option value="" disabled>Select an event</option>
+    <option value="Wedding">Wedding</option>
+    <option value="Engagement">Engagement</option>
+    <option value="Reception">Reception</option>
+    <option value="Birthday party">Birthday party</option>
+    <option value="Meeting">Meeting</option>
+    <option value="Baby Shower">Baby Shower</option>
+  </select>
+</div>
+
               <div className="col-md-12">
                 <label htmlFor="services" className="form-label">Our Services</label>
                 <div className="form-check">
@@ -217,15 +229,29 @@ function CombinedForm() {
                 <input type="number" className="form-control" id="numDays" value={numDays} readOnly />
               </div>
               <div className="col-md-12">
-                <div className="form-check">
-                  <input className="form-check-input" type="radio" name="roomOption" id="withRooms" checked={withRooms} onChange={() => setWithRooms(true)} />
-                  <label className="form-check-label" htmlFor="withRooms">With Rooms</label>
-                </div>
-                <div className="form-check">
-                  <input className="form-check-input" type="radio" name="roomOption" id="withoutRooms" checked={!withRooms} onChange={() => setWithRooms(false)} />
-                  <label className="form-check-label" htmlFor="withoutRooms">Without Rooms</label>
-                </div>
-              </div>
+  <div className="form-check">
+    <input
+      className="form-check-input"
+      type="radio"
+      name="roomOption"
+      id="withRooms"
+      checked={withRooms === true}
+      onChange={() => setWithRooms(true)}
+    />
+    <label className="form-check-label" htmlFor="withRooms">With Rooms</label>
+  </div>
+  <div className="form-check">
+    <input
+      className="form-check-input"
+      type="radio"
+      name="roomOption"
+      id="withoutRooms"
+      checked={withRooms === false}
+      onChange={() => setWithRooms(false)}
+    />
+    <label className="form-check-label" htmlFor="withoutRooms">Without Rooms</label>
+  </div>
+</div>
               {withRooms && (
                 <>
                   <div className="col-md-6">
@@ -235,14 +261,22 @@ function CombinedForm() {
                   <div className="col-md-6">
                     <label htmlFor="roomType" className="form-label">Room Type</label>
                     <select id="roomType" className="form-control" value={formData.roomType} onChange={handleInputChange}>
+                    <option value="" disabled>Room Type</option>
                       <option value="AC">AC</option>
                       <option value="Non-AC">Non-AC</option>
                     </select>
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="numRoomsNeeded" className="form-label">Number of Rooms Needed</label>
-                    <input type="number" className="form-control" id="numRoomsNeeded" value={formData.numRoomsNeeded} onChange={handleInputChange} />
-                  </div>
+                <label htmlFor="numRoomsNeeded" className="form-label">Number of Rooms</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="numRoomsNeeded"
+                  value={formData.numRoomsNeeded}
+                  readOnly
+                  required
+                />
+              </div>
                   {/* Room selection */}
                   <div className="col-md-12">
                     <h6 className="form-label">Select Room Numbers*</h6>
@@ -250,11 +284,12 @@ function CombinedForm() {
                       {[...Array(10)].map((_, index) => {
                         const roomNumber = index + 1;
                         const isRoomSelected = formData.selectedRooms.includes(roomNumber);
+                        const isDisabled = formData.selectedRooms.length >= formData.numRoomsNeeded && !isRoomSelected;
                         return (
                           <div
                             key={roomNumber}
-                            className={`room-opt ${isRoomSelected ? 'selected' : ''}`}
-                            onClick={() => handleRoomSelection(roomNumber)}
+                            className={`room-opt ${isRoomSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
+                            onClick={() => !isDisabled && handleRoomSelection(roomNumber)}
                           >
                             G {roomNumber}
                           </div>

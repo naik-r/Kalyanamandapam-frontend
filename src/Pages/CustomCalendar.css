@@ -11,7 +11,7 @@
 
 .calendar-icon {
   position: absolute;
-  top: 50%;
+  top: 40%;
   transform: translateY(-50%);
   right: 10px; /* Adjust as needed */
   cursor: pointer;

@@ -1,68 +1,107 @@
+/* Custom.css */
+
+/* Styling for unavailable dates */
 .custom-calendar-wrapper .unavailable-date {
-    border: 2px solid red;
-   
-    border-radius: 50%;
-  }
+  border: 2px solid red;
+  border-radius: 50%;
+}
 
-  .input-container {
-    position: relative;
-    width: 100%;
-  }
-  .calendar-icon {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 10px; /* Adjust as needed */
-    cursor: pointer;
-    z-index: 2; /* Ensure the icon is above the input */
-  }
-  .form-control {
-    width: 100%;
-    padding-right: 30px; /* Reserve space for the icon */
-    position: relative;
-    z-index: 1; /* Ensure the input is above the icon */
-  }
-  .react-datepicker-wrapper {
-    position: absolute;
-    width: 100%;
-    top: 100%;
-    left: 0;
-    z-index: 10; /* Ensure the calendar dropdown is above other content */
-  }
+/* Container for input field and calendar icon */
+.input-container {
+  position: relative;
+  width: auto; /* Adjust the container width as needed */
+}
 
-  .custom-calendar-wrapper {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .calendar-room-container {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .room-selection-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns */
-    gap: 10px;
-    margin-left: 20px; /* Adjust spacing as needed */
-  }
-  
-  .room-option {
-    width: 50px; /* Adjust width as needed */
-    height: 50px; /* Adjust height as needed */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    border: 1px solid #DAA520;
-    cursor: pointer;
-    margin: 5px; /* Adjust margin as needed */
-    text-align: center;
-    border-radius: 5px;
+/* Styling for the calendar icon */
+.calendar-ic {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  right: 380px; /* Adjust as needed */
+  cursor: pointer;
+  z-index: 2; /* Ensure the icon is above the input */
+}
 
-  }
-  
-  .room-option.selected {
-    background-color: gray;
-    color: white;
-  }
+/* Input field styling */
+.form-control {
+  width: 100%;
+  padding-right: 30px; /* Reserve space for the icon */
+  position: relative;
+  z-index: 1; /* Ensure the input is above the icon */
+}
+
+/* Specific styling for the Select Dates input field */
+.select-dates-input {
+  width: 350px; /* Adjust width as needed */
+}
+
+/* Styling for the date picker wrapper */
+.react-datepicker-wrapper {
+  position: absolute;
+  width: auto; /* Adjust width as needed */
+  top: 100%;
+  left: 0;
+  z-index: 10; /* Ensure the calendar dropdown is above other content */
+}
+
+/* Main container for the custom calendar */
+.custom-calendar-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Container for calendar and room selection */
+.calendar-room-container {
+  display: flex;
+  flex-direction: row; /* Align calendar and room selection horizontally */
+  align-items: flex-start;
+}
+
+/* Grid layout for room selection */
+.room-selection-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* Five columns */
+  gap: 20px;
+  margin-left: 20px; /* Adjust spacing between calendar and room selection */
+}
+
+/* Individual room option styling */
+.room-option {
+  width: 50px; /* Adjust width as needed */
+  height: 50px; /* Adjust height as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid #DAA520;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover and selection */
+}
+
+/* Styling for selected room option */
+.room-option.selected {
+  background-color: gray;
+  color: white;
+}
+
+/* Styling for disabled room option */
+.room-option.disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  color: #aaa;
+}
+
+/* Hover effect for room options */
+.room-option:hover:not(.selected):not(.disabled) {
+  background-color: #f8f8f8;
+}
+
+/* Adjusting margin of the main container */
+#form {
+  margin: 20px auto; /* Center the form */
+}
+.room-cont{
+  margin-left: 60px;
+}

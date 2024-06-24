@@ -237,10 +237,16 @@ a:hover {
   margin-bottom: 10px;
   border: 1px solid #DAA520;
   border-radius: 5px;
+  
 }
 
 .room-opt.selected {
   background-color: grey;
   color: black;
   
+}
+.room-opt.disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  color: #aaa;
 }

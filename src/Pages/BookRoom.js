@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import CustomBook from './CustomBook';
+import CustomCalendar from './CustomBook'; // Updated import to match the component name
 import './Form.css';
 
 function FormWithRooms() {
   const navigate = useNavigate();
-  const [numDays, setNumDays] = useState(1); // Initialize numDays with default value
+  const [numDays, setNumDays] = useState(); // Initialize numDays with default value
   const [totalPrice, setTotalPrice] = useState(0);
-  const [numGuests, setNumGuests] = useState(50);
+  const [numGuests, setNumGuests] = useState();
   const [selectedDates, setSelectedDates] = useState([]);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     contactNumber: '',
     description: '',
-    numPersonsNeedingRoom: 10,
-    roomType: 'AC',
-    numRoomsNeeded: 1,
+    numPersonsNeedingRoom: '',
+    roomType: '',
+    numRoomsNeeded: '',
     selectedRooms: []
   });
 
-  // useEffect to update numDays and calculate totalPrice
   useEffect(() => {
     if (selectedDates.length > 0) {
       const dayDiff = selectedDates.length;
@@ -29,14 +28,12 @@ function FormWithRooms() {
     }
   }, [selectedDates, numGuests, formData.numRoomsNeeded, formData.roomType]);
 
-  // Function to calculate total price
   const calculateTotalPrice = (days, guests, roomsNeeded, selectedRoomType) => {
     const pricePerRoomPerDay = selectedRoomType === "AC" ? 1000 : 500;
     const roomCost = days * pricePerRoomPerDay * roomsNeeded;
     setTotalPrice(roomCost); // Update totalPrice state with only room cost
   };
 
-  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -69,34 +66,33 @@ function FormWithRooms() {
     }
   };
 
-  // Handle input changes
   const handleInputChange = (event) => {
     const { id, value } = event.target;
 
     if (id === 'numGuests') {
       const guests = parseInt(value, 10);
-      setNumGuests(guests); // Update numGuests state
-      calculateTotalPrice(numDays, guests, formData.numRoomsNeeded, formData.roomType); // Recalculate totalPrice
+      setNumGuests(guests);
+      calculateTotalPrice(numDays, guests, formData.numRoomsNeeded, formData.roomType);
     } else if (id === 'numPersonsNeedingRoom') {
       const personsNeedingRoom = parseInt(value, 10);
       setFormData(prevState => ({
         ...prevState,
         [id]: personsNeedingRoom
       }));
-      calculateNumRoomsNeeded(personsNeedingRoom); // Recalculate numRoomsNeeded and totalPrice
+      calculateNumRoomsNeeded(personsNeedingRoom);
     } else if (id === 'roomType') {
       setFormData(prevState => ({
         ...prevState,
         [id]: value
       }));
-      calculateTotalPrice(numDays, numGuests, formData.numRoomsNeeded, value); // Recalculate totalPrice
+      calculateTotalPrice(numDays, numGuests, formData.numRoomsNeeded, value);
     } else if (id === 'numRoomsNeeded') {
       const roomsNeeded = parseInt(value, 10);
       setFormData(prevState => ({
         ...prevState,
         numRoomsNeeded: roomsNeeded
       }));
-      calculateTotalPrice(numDays, numGuests, roomsNeeded, formData.roomType); // Recalculate totalPrice
+      calculateTotalPrice(numDays, numGuests, roomsNeeded, formData.roomType);
     } else {
       setFormData(prevState => ({
         ...prevState,
@@ -105,16 +101,15 @@ function FormWithRooms() {
     }
   };
 
-  // Calculate number of rooms needed based on persons needing room
   const calculateNumRoomsNeeded = (personsNeedingRoom) => {
-    const roomsNeeded = Math.ceil(personsNeedingRoom / 2); // Assuming each room can accommodate up to 4 persons
+    const roomsNeeded = Math.ceil(personsNeedingRoom / 2);
     setFormData(prevData => ({
       ...prevData,
-      numRoomsNeeded: roomsNeeded
+      numRoomsNeeded: roomsNeeded,
+      selectedRooms: [] // Reset selected rooms
     }));
-    calculateTotalPrice(numDays, numGuests, roomsNeeded, formData.roomType); // Recalculate totalPrice
+    calculateTotalPrice(numDays, numGuests, roomsNeeded, formData.roomType);
   };
-
 
   return (
     <div id="imgbg" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/image/gt2.jpg)` }}>
@@ -136,13 +131,6 @@ function FormWithRooms() {
                 <label htmlFor="contactNumber" className="form-label">Contact Number*</label>
                 <input type="tel" className="form-control" id="contactNumber" value={formData.contactNumber} onChange={handleInputChange} required />
               </div>
-              <CustomBook
-  selectedDates={selectedDates}
-  setSelectedDates={setSelectedDates}
-  formData={formData}
-  setFormData={setFormData}
-/>
-              
               <div className="col-md-6">
                 <label htmlFor="numPersonsNeedingRoom" className="form-label">Number of Persons Needing Room*</label>
                 <input
@@ -163,6 +151,7 @@ function FormWithRooms() {
                   onChange={handleInputChange}
                   required
                 >
+                <option value="" disabled>Room Type</option>
                   <option value="AC">AC</option>
                   <option value="Non-AC">Non-AC</option>
                 </select>
@@ -178,12 +167,16 @@ function FormWithRooms() {
                   required
                 />
               </div>
-            
+              <CustomCalendar
+                selectedDates={selectedDates}
+                setSelectedDates={setSelectedDates}
+                formData={formData}
+                setFormData={setFormData}
+              />
               <div className="col-md-6">
                 <label htmlFor="numDays" className="form-label">Number of Days</label>
                 <input type="number" className="form-control" id="numDays" value={numDays} readOnly />
               </div>
-            
               <div className="col-md-12">
                 <label htmlFor="description" className="form-label">Description</label>
                 <textarea
@@ -198,9 +191,6 @@ function FormWithRooms() {
                 <input type="text" className="form-control" id="totalPrice" value={totalPrice} readOnly />
               </div>
             </div>
-            
-            
-            
             <button type="submit" className="btn btn-primary">Confirm</button>
           </form>
         </div>
