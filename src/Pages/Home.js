@@ -1,6 +1,45 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import "../App.css";
 function Home(){
+  const animatedContainerRef = useRef(null);
+  const observerRef = useRef(null); // Ref to hold the IntersectionObserver instance
+
+  useEffect(() => {
+    // Function to initialize IntersectionObserver
+    const initIntersectionObserver = () => {
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            } else {
+              entry.target.classList.remove("visible");
+            }
+          });
+        },
+        { threshold: 0.1 } // Trigger when 10% of the element is visible
+      );
+
+      // Start observing if the ref exists
+      if (animatedContainerRef.current && observerRef.current) {
+        observerRef.current.observe(animatedContainerRef.current);
+      }
+    };
+
+    // Initialize IntersectionObserver
+    initIntersectionObserver();
+
+    // Cleanup function
+    return () => {
+      // Check if observerRef.current and animatedContainerRef.current are defined
+      if (observerRef.current && animatedContainerRef.current) {
+        observerRef.current.unobserve(animatedContainerRef.current);
+      }
+      // Cleanup observerRef.current
+      observerRef.current = null;
+    };
+  }, []);
+
     return(
         <div style={{backgroundColor:'#f0f0f0'}}>
 <div id="carouselExampleCaptions" className="carousel slide" data-bs-ride="carousel">
@@ -45,6 +84,30 @@ function Home(){
 
 <div id="Amenities">
 <h1 id="amenities1" className="text"><strong>Amenities</strong></h1>
+<div className="container my-5 animated-container" ref={animatedContainerRef} >
+          <div className="row" >
+            <div className="col-md-6">
+              <img src={`${process.env.PUBLIC_URL}/image/gt8.jpg`} className="img-fluid" alt="Marriage Hall" />
+            </div>
+            <div className="col-md-6 d-flex align-items-center">
+              <div className="text-container">
+                <h2>💐Welcome to Gangaaram Function Hall💐</h2>
+                <p style={{ textAlign: 'justify' }}>Experience the grandeur and elegance at Gangaaram Function Hall, the perfect venue for your special occasions. 
+                Whether you are planning a wedding, anniversary, or any other celebration, we provide a stunning setting and exceptional service to make your event unforgettable. 
+                Our hall features modern amenities and luxurious decor,
+                 creating an atmosphere of sophistication and style. 
+                  Celebrate your moments of joy with us and create memories that will last a lifetime.
+
+Our commitment to excellence is evident in every aspect of our service. From the moment you step into our beautifully designed entrance, you'll be greeted with warmth and professionalism. Our elegant interiors are designed to provide a versatile backdrop that can be customized to suit any theme or style. 
+
+</p>
+<p style={{ textAlign: 'justify' }}>Parking is never an issue with our extensive parking facilities, ensuring convenience for you and your guests. We also offer additional services such as valet parking, shuttle services, and accommodation arrangements for out-of-town guests, making Gangaaram Function Hall a comprehensive solution for all your event needs.
+</p>
+
+              </div>
+            </div>
+          </div>
+        </div>
 
 
 <div id="grid">

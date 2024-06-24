@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import CustomCalendar from './CustomCalendar';
 import './Form.css'; // Assuming you have saved the CSS in a file named Form.css
@@ -23,25 +23,29 @@ function CombinedForm() {
     numPersonsNeedingRoom: 10,
     roomType: 'AC',
     numRoomsNeeded: 1,
+    selectedRooms: [] // Added selectedRooms state for room selection
   });
 
-  useEffect(() => {
-    if (selectedDates.length > 0) {
-      const dayDiff = selectedDates.length;
-      setNumDays(dayDiff);
-      calculateTotalPrice(dayDiff, numGuests, formData.services, formData.numRoomsNeeded, formData.roomType);
-    }
-  }, [selectedDates, numGuests, formData.services, formData.numRoomsNeeded, formData.roomType, withRooms]);
-
-  const calculateTotalPrice = (days, guests, services, roomsNeeded, selectedRoomType) => {
+  // Calculate total price based on form inputs
+  const calculateTotalPrice = useCallback((days, guests, services, roomsNeeded, selectedRoomType) => {
     const hallCost = days * 50000;
     const serviceCost = (services.catering ? 30000 : 0) + (services.decoration ? 20000 : 0);
     const pricePerRoomPerDay = selectedRoomType === "AC" ? 1000 : 500;
     const roomCost = withRooms ? days * pricePerRoomPerDay * roomsNeeded : 0;
     const totalPrice = hallCost + serviceCost + roomCost;
     setTotalPrice(totalPrice);
-  };
+  }, [withRooms]);
 
+  // Effect to update total price when inputs change
+  useEffect(() => {
+    if (selectedDates.length > 0) {
+      const dayDiff = selectedDates.length;
+      setNumDays(dayDiff);
+      calculateTotalPrice(dayDiff, numGuests, formData.services, formData.numRoomsNeeded, formData.roomType);
+    }
+  }, [selectedDates, numGuests, formData.services, formData.numRoomsNeeded, formData.roomType, withRooms, calculateTotalPrice]);
+
+  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -75,6 +79,7 @@ function CombinedForm() {
     }
   };
 
+  // Handle input changes
   const handleInputChange = (event) => {
     const { id, value, type, checked } = event.target;
 
@@ -122,8 +127,9 @@ function CombinedForm() {
     }
   };
 
+  // Calculate number of rooms needed based on persons needing room
   const calculateNumRoomsNeeded = (personsNeedingRoom) => {
-    const roomsNeeded = Math.ceil(personsNeedingRoom / 4);
+    const roomsNeeded = Math.ceil(personsNeedingRoom / 2);
     setFormData(prevData => ({
       ...prevData,
       numRoomsNeeded: roomsNeeded
@@ -131,6 +137,31 @@ function CombinedForm() {
     calculateTotalPrice(numDays, numGuests, formData.services, roomsNeeded, formData.roomType);
   };
 
+  // Handle room selection
+  const handleRoomSelection = (roomNumber) => {
+    const { selectedRooms } = formData;
+    let updatedSelectedRooms;
+  
+    if (selectedRooms.includes(roomNumber)) {
+      // Remove room number if already selected
+      updatedSelectedRooms = selectedRooms.filter(room => room !== roomNumber);
+    } else if (selectedRooms.length < 10) {
+      // Add room number if less than 10 rooms selected
+      updatedSelectedRooms = [...selectedRooms, roomNumber];
+    } else {
+      // Already at max rooms selected
+      updatedSelectedRooms = selectedRooms;
+    }
+  
+    // Update formData state with updated selected rooms
+    setFormData(prevState => ({
+      ...prevState,
+      selectedRooms: updatedSelectedRooms
+    }));
+  
+    // Log selected rooms to console
+    console.log("Selected Rooms:", updatedSelectedRooms);
+  };
   return (
     <div id="imgbg" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/image/gt2.jpg)` }}>
       <div id="avail" className="containerf">
@@ -212,6 +243,25 @@ function CombinedForm() {
                     <label htmlFor="numRoomsNeeded" className="form-label">Number of Rooms Needed</label>
                     <input type="number" className="form-control" id="numRoomsNeeded" value={formData.numRoomsNeeded} onChange={handleInputChange} />
                   </div>
+                  {/* Room selection */}
+                  <div className="col-md-12">
+                    <h6 className="form-label">Select Room Numbers*</h6>
+                    <div className="room-select-container">
+                      {[...Array(10)].map((_, index) => {
+                        const roomNumber = index + 1;
+                        const isRoomSelected = formData.selectedRooms.includes(roomNumber);
+                        return (
+                          <div
+                            key={roomNumber}
+                            className={`room-opt ${isRoomSelected ? 'selected' : ''}`}
+                            onClick={() => handleRoomSelection(roomNumber)}
+                          >
+                            G {roomNumber}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </>
               )}
               <div className="col-md-12">
@@ -228,9 +278,7 @@ function CombinedForm() {
           </form>
         </div>
       </div>
-      <div className="space">
-
-      </div>
+      <div className="space"></div>
     </div>
   );
 }

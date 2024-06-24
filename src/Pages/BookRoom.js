@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import CustomCalendar from './CustomCalendar';
+import CustomBook from './CustomBook';
 import './Form.css';
 
 function FormWithRooms() {
@@ -17,6 +17,7 @@ function FormWithRooms() {
     numPersonsNeedingRoom: 10,
     roomType: 'AC',
     numRoomsNeeded: 1,
+    selectedRooms: []
   });
 
   // useEffect to update numDays and calculate totalPrice
@@ -106,13 +107,14 @@ function FormWithRooms() {
 
   // Calculate number of rooms needed based on persons needing room
   const calculateNumRoomsNeeded = (personsNeedingRoom) => {
-    const roomsNeeded = Math.ceil(personsNeedingRoom / 4); // Assuming each room can accommodate up to 4 persons
+    const roomsNeeded = Math.ceil(personsNeedingRoom / 2); // Assuming each room can accommodate up to 4 persons
     setFormData(prevData => ({
       ...prevData,
       numRoomsNeeded: roomsNeeded
     }));
     calculateTotalPrice(numDays, numGuests, roomsNeeded, formData.roomType); // Recalculate totalPrice
   };
+
 
   return (
     <div id="imgbg" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/image/gt2.jpg)` }}>
@@ -134,10 +136,12 @@ function FormWithRooms() {
                 <label htmlFor="contactNumber" className="form-label">Contact Number*</label>
                 <input type="tel" className="form-control" id="contactNumber" value={formData.contactNumber} onChange={handleInputChange} required />
               </div>
-              <CustomCalendar
-                selectedDates={selectedDates}
-                setSelectedDates={setSelectedDates}
-              />
+              <CustomBook
+  selectedDates={selectedDates}
+  setSelectedDates={setSelectedDates}
+  formData={formData}
+  setFormData={setFormData}
+/>
               
               <div className="col-md-6">
                 <label htmlFor="numPersonsNeedingRoom" className="form-label">Number of Persons Needing Room*</label>
@@ -179,6 +183,7 @@ function FormWithRooms() {
                 <label htmlFor="numDays" className="form-label">Number of Days</label>
                 <input type="number" className="form-control" id="numDays" value={numDays} readOnly />
               </div>
+            
               <div className="col-md-12">
                 <label htmlFor="description" className="form-label">Description</label>
                 <textarea
@@ -193,9 +198,14 @@ function FormWithRooms() {
                 <input type="text" className="form-control" id="totalPrice" value={totalPrice} readOnly />
               </div>
             </div>
+            
+            
+            
             <button type="submit" className="btn btn-primary">Confirm</button>
           </form>
         </div>
+      </div>
+      <div className="space">
       </div>
     </div>
   );

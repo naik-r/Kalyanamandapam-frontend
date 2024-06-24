@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { FaCalendarAlt } from 'react-icons/fa';
-import './CustomCalendar.css'; // Custom CSS for styling available and unavailable dates
+import './Custom.css'; // Custom CSS for styling available and unavailable dates
 
-function CustomCalendar({ selectedDates, setSelectedDates }) {
+function CustomCalendar({ selectedDates, setSelectedDates, formData, setFormData }) {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [unavailableDates, setUnavailableDates] = useState([]);
 
@@ -52,12 +52,37 @@ function CustomCalendar({ selectedDates, setSelectedDates }) {
     setCalendarOpen(!calendarOpen);
   };
 
+  const handleRoomSelection = (roomNumber) => {
+    const { selectedRooms } = formData;
+    let updatedSelectedRooms;
+
+    if (selectedRooms.includes(roomNumber)) {
+      // Remove room number if already selected
+      updatedSelectedRooms = selectedRooms.filter(room => room !== roomNumber);
+    } else if (selectedRooms.length < 10) {
+      // Add room number if less than 10 rooms selected
+      updatedSelectedRooms = [...selectedRooms, roomNumber];
+    } else {
+      // Already at max rooms selected
+      updatedSelectedRooms = selectedRooms;
+    }
+
+    // Update formData state with updated selected rooms
+    setFormData(prevState => ({
+      ...prevState,
+      selectedRooms: updatedSelectedRooms
+    }));
+
+    // Log selected rooms to console
+    console.log("Selected Rooms:", updatedSelectedRooms);
+  };
+
   const today = new Date();
   const threeMonthsLater = new Date();
   threeMonthsLater.setMonth(today.getMonth() + 3);
 
   return (
-    <div className="col-md-6">
+    <div className="col-md-12">
       <label htmlFor="selectDate" className="form-label">
         Select Dates*
       </label>
@@ -76,7 +101,7 @@ function CustomCalendar({ selectedDates, setSelectedDates }) {
           </div>
         </div>
         {calendarOpen && (
-          <div className="datepicker-container">
+          <div className="calendar-room-container">
             <DatePicker
               selected={null}
               onChange={handleDateChange}
@@ -86,6 +111,26 @@ function CustomCalendar({ selectedDates, setSelectedDates }) {
               inline
               required
             />
+            {selectedDates.length > 0 && (
+              <div>
+              <h6 className="form-label">Select Room Numbers*</h6>
+              <div className="room-selection-container">
+                {[...Array(10)].map((_, index) => {
+                  const roomNumber = index + 1;
+                  const isRoomSelected = formData.selectedRooms.includes(roomNumber);
+                  return (
+                    <div
+                      key={roomNumber}
+                      className={`room-option ${isRoomSelected ? 'selected' : ''}`}
+                      onClick={() => handleRoomSelection(roomNumber)}
+                    >
+                      G {roomNumber}
+                    </div>
+                  );
+                })}
+              </div>
+              </div>
+            )}
           </div>
         )}
       </div>

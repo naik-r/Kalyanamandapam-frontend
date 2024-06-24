@@ -223,3 +223,24 @@ a:hover {
 .space{
   margin-top: 50px;
 }
+/*new*/
+.room-select-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.room-opt {
+  cursor: pointer;
+  align-items: center;
+  padding: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #DAA520;
+  border-radius: 5px;
+}
+
+.room-opt.selected {
+  background-color: grey;
+  color: black;
+  
+}
