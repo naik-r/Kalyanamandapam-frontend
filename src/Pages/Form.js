@@ -6,11 +6,11 @@ import './Form.css'; // Assuming you have saved the CSS in a file named Form.css
 function CombinedForm() {
   const navigate = useNavigate();
   const [selectedDates, setSelectedDates] = useState([]);
-  const [numGuests, setNumGuests] = useState();
-  const [numDays, setNumDays] = useState();
+  const [numGuests, setNumGuests] = useState(0); // Set default value to 0
+  const [numDays, setNumDays] = useState(0); // Set default value to 0
   const [totalPrice, setTotalPrice] = useState(50000);
-  const [withRooms, setWithRooms] = useState(null); // Initially unselected
-
+  const [withRooms, setWithRooms] = useState(false); // Set default value to false
+  const [unavailableDates, setUnavailableDates] = useState([]);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -21,11 +21,25 @@ function CombinedForm() {
       catering: false,
       decoration: false
     },
-    numPersonsNeedingRoom: '',
-    roomType: '',
+    numPersonsNeedingRoom: 0, // Set default value to 0
+    roomType: 'AC', // Set default value to 'AC'
     numRoomsNeeded: 0,
     selectedRooms: [] // Added selectedRooms state for room selection
   });
+
+  useEffect(() => {
+    fetchUnavailableDates();
+  }, []);
+   
+  const fetchUnavailableDates = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/onlyhall/unavailable-dates');
+      const dates = await response.json();
+      setUnavailableDates(dates.map(date => new Date(date)));
+    } catch (error) {
+      console.error("Failed to fetch unavailable dates:", error);
+    }
+  };
 
   // Calculate total price based on form inputs
   const calculateTotalPrice = useCallback((days, guests, services, roomsNeeded, selectedRoomType) => {
@@ -50,16 +64,24 @@ function CombinedForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (withRooms && !formData.roomType) {
+      alert('Please select a room type.');
+      return;
+    }
+  
     const bookingData = {
       ...formData,
-      selectedDates,
-      numGuests,
-      numDays,
-      totalPrice
+      selectedDates: selectedDates.map(date => new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString()),
+      unavailableDates: unavailableDates.map(date => new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString()),
+      totalPrice: totalPrice, // Ensure all fields are sent
+      numDays: numDays,
+      numGuests: numGuests,
+      withRooms: withRooms,
     };
+    console.log("bookingData", bookingData);
 
     try {
-      const url = withRooms ? 'http://localhost:5000/api/halls' : 'http://localhost:5000/api/onlyhall';
+      const url = 'http://localhost:5000/api/onlyhall'; 
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -97,11 +119,11 @@ function CombinedForm() {
         [id]: checked
       }, formData.numRoomsNeeded, formData.roomType);
     } else if (id === 'numGuests') {
-      const guests = parseInt(value, 10);
+      const guests = parseInt(value, 10) || 0;
       setNumGuests(guests);
       calculateTotalPrice(numDays, guests, formData.services, formData.numRoomsNeeded, formData.roomType);
     } else if (id === 'numPersonsNeedingRoom') {
-      const personsNeedingRoom = parseInt(value, 10);
+      const personsNeedingRoom = parseInt(value, 10) || 0;
       setFormData(prevState => ({
         ...prevState,
         [id]: personsNeedingRoom,
@@ -116,7 +138,7 @@ function CombinedForm() {
       }));
       calculateTotalPrice(numDays, numGuests, formData.services, formData.numRoomsNeeded, value);
     } else if (id === 'numRoomsNeeded') {
-      const roomsNeeded = parseInt(value, 10);
+      const roomsNeeded = parseInt(value, 10) || 0;
       setFormData(prevState => ({
         ...prevState,
         numRoomsNeeded: roomsNeeded
@@ -189,25 +211,25 @@ function CombinedForm() {
               <CustomCalendar
                 selectedDates={selectedDates}
                 setSelectedDates={setSelectedDates}
+                unavailableDates={unavailableDates}
               />
-            <div className="col-md-6">
-  <label htmlFor="event" className="form-label">Select Event*</label>
-  <select
-    id="event"
-    className="form-control"
-    value={formData.event}
-    onChange={handleInputChange}
-  >
-    <option value="" disabled>Select an event</option>
-    <option value="Wedding">Wedding</option>
-    <option value="Engagement">Engagement</option>
-    <option value="Reception">Reception</option>
-    <option value="Birthday party">Birthday party</option>
-    <option value="Meeting">Meeting</option>
-    <option value="Baby Shower">Baby Shower</option>
-  </select>
-</div>
-
+              <div className="col-md-6">
+                <label htmlFor="event" className="form-label">Select Event*</label>
+                <select
+                  id="event"
+                  className="form-control"
+                  value={formData.event}
+                  onChange={handleInputChange}
+                >
+                  <option value="" disabled>Select an event</option>
+                  <option value="Wedding">Wedding</option>
+                  <option value="Engagement">Engagement</option>
+                  <option value="Reception">Reception</option>
+                  <option value="Birthday party">Birthday party</option>
+                  <option value="Meeting">Meeting</option>
+                  <option value="Baby Shower">Baby Shower</option>
+                </select>
+              </div>
               <div className="col-md-12">
                 <label htmlFor="services" className="form-label">Our Services</label>
                 <div className="form-check">
@@ -219,7 +241,6 @@ function CombinedForm() {
                   <label className="form-check-label" htmlFor="decoration">Decoration</label>
                 </div>
               </div>
-             
               <div className="col-md-6">
                 <label htmlFor="numGuests" className="form-label">Number of Guests*</label>
                 <input type="number" className="form-control" id="numGuests" value={numGuests} onChange={handleInputChange} />
@@ -229,29 +250,29 @@ function CombinedForm() {
                 <input type="number" className="form-control" id="numDays" value={numDays} readOnly />
               </div>
               <div className="col-md-12">
-  <div className="form-check">
-    <input
-      className="form-check-input"
-      type="radio"
-      name="roomOption"
-      id="withRooms"
-      checked={withRooms === true}
-      onChange={() => setWithRooms(true)}
-    />
-    <label className="form-check-label" htmlFor="withRooms">With Rooms</label>
-  </div>
-  <div className="form-check">
-    <input
-      className="form-check-input"
-      type="radio"
-      name="roomOption"
-      id="withoutRooms"
-      checked={withRooms === false}
-      onChange={() => setWithRooms(false)}
-    />
-    <label className="form-check-label" htmlFor="withoutRooms">Without Rooms</label>
-  </div>
-</div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="roomOption"
+                    id="withRooms"
+                    checked={withRooms === true}
+                    onChange={() => setWithRooms(true)}
+                  />
+                  <label className="form-check-label" htmlFor="withRooms">With Rooms</label>
+                </div>
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="roomOption"
+                    id="withoutRooms"
+                    checked={withRooms === false}
+                    onChange={() => setWithRooms(false)}
+                  />
+                  <label className="form-check-label" htmlFor="withoutRooms">Without Rooms</label>
+                </div>
+              </div>
               {withRooms && (
                 <>
                   <div className="col-md-6">
@@ -261,22 +282,22 @@ function CombinedForm() {
                   <div className="col-md-6">
                     <label htmlFor="roomType" className="form-label">Room Type*</label>
                     <select id="roomType" className="form-control" value={formData.roomType} onChange={handleInputChange}>
-                    <option value="" disabled>Room Type</option>
+                      <option value="" disabled>Room Type</option>
                       <option value="AC">AC</option>
                       <option value="Non-AC">Non-AC</option>
                     </select>
                   </div>
                   <div className="col-md-6">
-                <label htmlFor="numRoomsNeeded" className="form-label">Number of Rooms</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="numRoomsNeeded"
-                  value={formData.numRoomsNeeded}
-                  readOnly
-                  required
-                />
-              </div>
+                    <label htmlFor="numRoomsNeeded" className="form-label">Number of Rooms</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="numRoomsNeeded"
+                      value={formData.numRoomsNeeded}
+                      readOnly
+                      required
+                    />
+                  </div>
                   {/* Room selection */}
                   <div className="col-md-12">
                     <h6 className="form-label">Select Room Numbers*</h6>

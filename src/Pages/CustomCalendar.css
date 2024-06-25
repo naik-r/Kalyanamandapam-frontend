@@ -42,4 +42,6 @@
 .unavailable-date {
   border: 2px solid red;
   border-radius: 50%;
+  background-color: rgba(255, 0, 0, 0.1);
 }
+

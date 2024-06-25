@@ -1,55 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { FaCalendarAlt } from 'react-icons/fa';
-import './CustomCalendar.css'; // Custom CSS for styling available and unavailable dates
+import './CustomCalendar.css'; // Custom CSS for styling available andunavailable dates
 
-function CustomCalendar({ selectedDates, setSelectedDates }) {
-  const [calendarOpen, setCalendarOpen] = useState(false);
-  const [unavailableDates, setUnavailableDates] = useState([]);
+function CustomCalendar({ selectedDates, setSelectedDates, unavailableDates = [] }) {
+  // const [unavailableDates, setUnavailableDates] = useState([]);
+  const [selected, setSelected] = useState(selectedDates);
+
+  useEffect(() => {
+    setSelectedDates(selected);
+  }, [selected, setSelectedDates]);
 
   const isUnavailableDate = date => {
     return unavailableDates.some(
-      unavailableDate => unavailableDate.toDateString() === date.toDateString()
+      unavailableDate => unavailableDate.toISOString().split('T')[0] === date.toISOString().split('T')[0]
     );
   };
 
-  const getDateClass = date => {
+   const getDateClass = date => {
     if (isUnavailableDate(date)) return 'unavailable-date';
+    if (selected.some(selectedDate => selectedDate.toISOString().split('T')[0] === date.toISOString().split('T')[0])) {
+      return 'selected-date';
+    }
     return '';
   };
+  const normalizeDate = date => {
+    const normalizedDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    return normalizedDate;
+  };
 
-  const handleDateChange = date => {
-    const index = selectedDates.findIndex(selectedDate =>
-      selectedDate.toDateString() === date.toDateString()
-    );
+  const handleDateClick = date => {
+    if (isUnavailableDate(date)) {
+      return;
+    }
+
+    const normalizedDate = normalizeDate(date);
+    
+    const index = selected.findIndex(selectedDate => selectedDate.toISOString().split('T')[0] === normalizedDate.toISOString().split('T')[0]);
+
+    
+  // const handleDateChange = date => {
+  //   const index = selectedDates.findIndex(selectedDate =>
+  //     selectedDate.toDateString() === date.toDateString()
+  //   );
 
     let updatedSelectedDates;
     if (index !== -1) {
       // Date already selected, remove it
       updatedSelectedDates = [...selectedDates];
       updatedSelectedDates.splice(index, 1);
-      setSelectedDates(updatedSelectedDates);
+      // setSelectedDates(updatedSelectedDates);
 
       // Remove from unavailable dates
-      setUnavailableDates(
-        unavailableDates.filter(
-          unavailableDate => unavailableDate.toDateString() !== date.toDateString()
-        )
-      );
+//       setUnavailableDates(
+//         unavailableDates.filter(
+//           unavailableDate => unavailableDate.toDateString() !==
+// date.toDateString()
+//         )
+//       );
     } else {
       // Date not selected, add it
-      updatedSelectedDates = [...selectedDates, date];
-      setSelectedDates(updatedSelectedDates);
-      setUnavailableDates([...unavailableDates, date]);
+      updatedSelectedDates = [...selectedDates, normalizedDate];
+      // setSelectedDates(updatedSelectedDates);
+      // setUnavailableDates([...unavailableDates, date]);
     }
-
+    setSelected(updatedSelectedDates);
     // Log the selected dates to the console
-    console.log('Selected dates:', updatedSelectedDates.map(d => d.toDateString()));
-  };
-
-  const toggleCalendar = () => {
-    setCalendarOpen(!calendarOpen);
+//     console.log('Selected dates:', updatedSelectedDates.map(d =>
+// d.toDateString()));
   };
 
   const today = new Date();
@@ -62,32 +80,16 @@ function CustomCalendar({ selectedDates, setSelectedDates }) {
         Select Dates*
       </label>
       <div className="custom-calendar-wrapper">
-        <div className="input-container">
-          <input
-            type="text"
-            id="dates"
-            className="form-control"
-            placeholder="Select Dates"
-            readOnly
-            onClick={toggleCalendar}
-          />
-          <div className="calendar-icon" onClick={toggleCalendar}>
-            <FaCalendarAlt />
-          </div>
-        </div>
-        {calendarOpen && (
-          <div className="datepicker-container">
-            <DatePicker
-              selected={null}
-              onChange={handleDateChange}
-              dayClassName={date => getDateClass(date)}
-              minDate={today}
-              maxDate={threeMonthsLater}
-              inline
-              required
-            />
-          </div>
-        )}
+        <DatePicker
+             selected={null}
+             onChange={() => {}}
+             onSelect={handleDateClick}
+             dayClassName={date => getDateClass(date)}
+             minDate={today}
+             maxDate={threeMonthsLater}
+             inline
+             required
+        />
       </div>
     </div>
   );
