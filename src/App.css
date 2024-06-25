@@ -29,9 +29,9 @@
 }
 
 .card-text {
-    font-size: small;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-style: italic;
+    font-size: 15px;
+    font-family:'Times New Roman', Times, serif;
+    font-style: normal;
 }
 
 .card-title {
@@ -135,7 +135,7 @@ footer {
 
 /* Container styles */
 .animated-container {
-    background: linear-gradient(to right, #a90bb7, #8f94fb); /* Gradient background */
+    background: linear-gradient(to right, #edd456, #c97b70); /* Gradient background */
     padding: 20px;
     border-radius: 10px;
     color: white;
@@ -170,8 +170,8 @@ footer {
     position: relative;
     z-index: 1; /* Ensures text is above background image */
     color: black; /* Text color */
-    font-family: 'Arial', sans-serif;
-    font-weight: bold;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight:normal;
      /* Adds shadow for better readability */
   }
   
@@ -210,7 +210,7 @@ footer {
     display: inline-block;
     padding: 10px 20px;
     color: white;
-    background: linear-gradient(135deg, #ff7e5f, #feb47b); /* Gradient background */
+    background: linear-gradient(135deg, #aae30b, #feb47b); /* Gradient background */
     clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
     font-size: 2em;
     animation: arrowAnim 2s infinite;
