@@ -1,0 +1,97 @@
+/* Container styling */
+#gallerydiv {
+    min-height: 800px;
+    background-color: #f0f0f0;
+    padding: 20px;
+}
+
+/* Gallery flexbox layout */
+#gallery {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Image styling */
+.image {
+    padding: 20px;
+    opacity: 0;
+    transform: translateY(20px) scale(0.9) rotate(0deg);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.image.in-view {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
+}
+
+/* Image hover effect */
+#gh:hover {
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Heading styles */
+#gallerydiv h1 {
+    text-align: center;
+    font-style: italic;
+    font-size: 2.5em;
+    color: #f43708; /* Example color */
+}
+
+#gallerydiv h3 {
+    text-align: center;
+    font-style: italic;
+    font-size: 2em;
+    color: #f5700a; /* Example color */
+    margin-top: 40px;
+}
+
+/* Animation for headings */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#gallerydiv h1, h3 {
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* General styles */
+.shadow {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.shadow:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.bg-body {
+    background-color: #fff;
+}
+
+.rounded {
+    border-radius: 10px;
+}
+
+.p-3 {
+    padding: 1rem !important;
+}
+
+.m-3 {
+    margin: 1rem !important;
+}
+
+.mb-5 {
+    margin-bottom: 3rem !important;
+}
+.gal{
+    background-color: rgb(234, 225, 225);
+}

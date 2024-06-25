@@ -60,4 +60,10 @@
   
   /* General Body Styles */
   
-  
+  #book-page h1{
+    color: #f43708;
+    animation: fadeIn 1s ease-in-out;
+  }
+  .book{
+    background-color: rgb(234, 225, 225);
+  }

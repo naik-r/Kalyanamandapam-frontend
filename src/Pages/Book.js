@@ -5,8 +5,9 @@ import "./Book.css";
 
 function BookingPage() {
   return (
-    <div>
-    <h1><center>Booking</center></h1>
+    <div id="book-page">
+    <br></br>
+    <h1 className="book"><center>Booking</center></h1>
     <div className="booking-container my-5">
       <div className="row">
         <div className="col-md-6">

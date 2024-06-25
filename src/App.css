@@ -51,23 +51,8 @@
     transform: scale(1.1);
 }
 
-#gh:hover {
-    transform: scale(1.1);
-}
 
-#gallerydiv {
-    min-height: 800px;
-}
 
-#gallery {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.image {
-    padding: 20px;
-}
 
 /*footer*/
 footer {
@@ -187,7 +172,7 @@ footer {
     color: black; /* Text color */
     font-family: 'Arial', sans-serif;
     font-weight: bold;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Adds shadow for better readability */
+     /* Adds shadow for better readability */
   }
   
   .animated-container.visible .text-container h2,
@@ -219,5 +204,29 @@ footer {
     height: 100%;
     background: rgba(0, 0, 0, 0.4); /* Optional: Add a semi-transparent overlay for text contrast */
     z-index: 0; /* Ensures the background is behind text */
+  }
+  .animated-container h2 {
+    position: relative;
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b); /* Gradient background */
+    clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
+    font-size: 2em;
+    animation: arrowAnim 2s infinite;
+  }
+ 
+  
+  
+  @keyframes arrowAnim {
+    0% {
+      clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
+    }
+    50% {
+      clip-path: polygon(0 0, 95% 0, 100% 50%, 95% 100%, 0 100%);
+    }
+    100% {
+      clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
+    }
   }
   

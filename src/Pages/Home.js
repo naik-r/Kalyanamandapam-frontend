@@ -90,8 +90,12 @@ function Home(){
               <img src={`${process.env.PUBLIC_URL}/image/gt8.jpg`} className="img-fluid" alt="Marriage Hall" />
             </div>
             <div className="col-md-6 d-flex align-items-center">
+            
               <div className="text-container">
-                <h2>💐Welcome to Gangaaram Function Hall💐</h2>
+              <h2 className="arrow-background">
+          <span>Welcome to Gangaaram</span>
+          <span> Function Hall</span>
+        </h2>
                 <p style={{ textAlign: 'justify' }}>Experience the grandeur and elegance at Gangaaram Function Hall, the perfect venue for your special occasions. 
                 Whether you are planning a wedding, anniversary, or any other celebration, we provide a stunning setting and exceptional service to make your event unforgettable. 
                 Our hall features modern amenities and luxurious decor,
