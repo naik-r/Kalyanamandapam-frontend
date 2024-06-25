@@ -109,7 +109,7 @@ function CustomCalendar({ selectedDates, setSelectedDates, formData, setFormData
           <input
             type="text"
             id="dates"
-            className="form-control select-dates-input" // Add unique class here
+            className="form-control select-dates-inp" // Add unique class here
             placeholder="Select Dates"
             readOnly
             onClick={toggleCalendar}

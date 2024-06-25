@@ -22,7 +22,7 @@ function CombinedForm() {
       decoration: false
     },
     numPersonsNeedingRoom: '',
-    roomType: 'AC',
+    roomType: '',
     numRoomsNeeded: 0,
     selectedRooms: [] // Added selectedRooms state for room selection
   });
@@ -221,7 +221,7 @@ function CombinedForm() {
               </div>
              
               <div className="col-md-6">
-                <label htmlFor="numGuests" className="form-label">Number of Guests</label>
+                <label htmlFor="numGuests" className="form-label">Number of Guests*</label>
                 <input type="number" className="form-control" id="numGuests" value={numGuests} onChange={handleInputChange} />
               </div>
               <div className="col-md-6">
@@ -255,11 +255,11 @@ function CombinedForm() {
               {withRooms && (
                 <>
                   <div className="col-md-6">
-                    <label htmlFor="numPersonsNeedingRoom" className="form-label">Number of Persons Needing Room</label>
+                    <label htmlFor="numPersonsNeedingRoom" className="form-label">Number of Persons Needing Room*</label>
                     <input type="number" className="form-control" id="numPersonsNeedingRoom" value={formData.numPersonsNeedingRoom} onChange={handleInputChange} />
                   </div>
                   <div className="col-md-6">
-                    <label htmlFor="roomType" className="form-label">Room Type</label>
+                    <label htmlFor="roomType" className="form-label">Room Type*</label>
                     <select id="roomType" className="form-control" value={formData.roomType} onChange={handleInputChange}>
                     <option value="" disabled>Room Type</option>
                       <option value="AC">AC</option>
