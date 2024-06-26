@@ -17,8 +17,8 @@
 }
 
 .animated-box {
-  border: 2px solid #3498db; /* Border around animated box */
-  border-radius: 10px;
+  border: 2px solid #3498dbba; /* Border around animated box */
+  border-radius:12px;
   overflow: hidden; /* Hide overflow content */
 }
 p,h1{
@@ -32,7 +32,7 @@ p,h1{
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;/* Stylish font for contact message */
   font-size: 24px;
   font-style: italic;
-  color: #2e07db; /* Text color */
+  color: #0edb07; /* Text color */
 }
 
 .thank-you-heading {

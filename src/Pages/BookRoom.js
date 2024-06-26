@@ -5,18 +5,18 @@ import './Form.css';
 
 function FormWithRooms() {
   const navigate = useNavigate();
-  const [numDays, setNumDays] = useState(); // Initialize numDays with default value
+  const [numDays, setNumDays] = useState(0); // Initialize numDays with a default value
   const [totalPrice, setTotalPrice] = useState(0);
-  const [numGuests, setNumGuests] = useState();
+  const [numGuests, setNumGuests] = useState(0); // Initialize numGuests with a default value
   const [selectedDates, setSelectedDates] = useState([]);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     contactNumber: '',
     description: '',
-    numPersonsNeedingRoom: '',
+    numPersonsNeedingRoom: 0,
     roomType: '',
-    numRoomsNeeded: '',
+    numRoomsNeeded: 0,
     selectedRooms: []
   });
 
@@ -44,7 +44,7 @@ function FormWithRooms() {
       numDays,
       totalPrice
     };
-
+    console.log(formData);
     try {
       const response = await fetch('http://localhost:5000/api/halls', {
         method: 'POST',
@@ -89,7 +89,6 @@ function FormWithRooms() {
     } else if (id === 'numRoomsNeeded') {
       const roomsNeeded = parseInt(value, 10);
       setFormData(prevState => ({
-        ...prevState,
         numRoomsNeeded: roomsNeeded
       }));
       calculateTotalPrice(numDays, numGuests, roomsNeeded, formData.roomType);
@@ -130,6 +129,17 @@ function FormWithRooms() {
               <div className="col-md-12">
                 <label htmlFor="contactNumber" className="form-label">Contact Number*</label>
                 <input type="tel" className="form-control" id="contactNumber" value={formData.contactNumber} onChange={handleInputChange} required />
+              </div>
+              <div className="col-md-6">
+                <label htmlFor="numGuests" className="form-label">Number of Guests*</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="numGuests"
+                  value={numGuests}
+                  onChange={handleInputChange}
+                  required
+                />
               </div>
               <div className="col-md-6">
                 <label htmlFor="numPersonsNeedingRoom" className="form-label">Number of Persons Needing Room*</label>
