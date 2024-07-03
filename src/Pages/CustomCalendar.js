@@ -1,79 +1,53 @@
-import React, { useState ,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import './CustomCalendar.css'; // Custom CSS for styling available andunavailable dates
+import './CustomCalendar.css'; // Custom CSS for styling available and unavailable dates
 
 function CustomCalendar({ selectedDates, setSelectedDates, unavailableDates = [] }) {
-  // const [unavailableDates, setUnavailableDates] = useState([]);
   const [selected, setSelected] = useState(selectedDates);
 
   useEffect(() => {
     setSelectedDates(selected);
   }, [selected, setSelectedDates]);
-
-  const isUnavailableDate = date => {
-    return unavailableDates.some(
-      unavailableDate => unavailableDate.toISOString().split('T')[0] === date.toISOString().split('T')[0]
-    );
-  };
-
-   const getDateClass = date => {
-    if (isUnavailableDate(date)) return 'unavailable-date';
-    if (selected.some(selectedDate => selectedDate.toISOString().split('T')[0] === date.toISOString().split('T')[0])) {
-      return 'selected-date';
-    }
-    return '';
-  };
-  const normalizeDate = date => {
-    const normalizedDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    return normalizedDate;
-  };
-
-  const handleDateClick = date => {
-    if (isUnavailableDate(date)) {
-      return;
-    }
-
-    const normalizedDate = normalizeDate(date);
-    
-    const index = selected.findIndex(selectedDate => selectedDate.toISOString().split('T')[0] === normalizedDate.toISOString().split('T')[0]);
-
-    
-  // const handleDateChange = date => {
-  //   const index = selectedDates.findIndex(selectedDate =>
-  //     selectedDate.toDateString() === date.toDateString()
-  //   );
-
-    let updatedSelectedDates;
-    if (index !== -1) {
-      // Date already selected, remove it
-      updatedSelectedDates = [...selectedDates];
-      updatedSelectedDates.splice(index, 1);
-      // setSelectedDates(updatedSelectedDates);
-
-      // Remove from unavailable dates
-//       setUnavailableDates(
-//         unavailableDates.filter(
-//           unavailableDate => unavailableDate.toDateString() !==
-// date.toDateString()
-//         )
-//       );
-    } else {
-      // Date not selected, add it
-      updatedSelectedDates = [...selectedDates, normalizedDate];
-      // setSelectedDates(updatedSelectedDates);
-      // setUnavailableDates([...unavailableDates, date]);
-    }
-    setSelected(updatedSelectedDates);
-    // Log the selected dates to the console
-//     console.log('Selected dates:', updatedSelectedDates.map(d =>
-// d.toDateString()));
-  };
-
   const today = new Date();
   const threeMonthsLater = new Date();
   threeMonthsLater.setMonth(today.getMonth() + 3);
-
+  const normalizeDate = (date) => {
+    const normalizedDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    return normalizedDate;
+  };
+  
+  const isUnavailableDate = (date) => {
+    return unavailableDates.some(
+      (unavailableDate) =>
+        normalizeDate(unavailableDate).toISOString().split('T')[0] === normalizeDate(date).toISOString().split('T')[0]
+    );
+  };
+  
+  const handleDateClick = (date) => {
+    if (isUnavailableDate(date)) {
+      return;
+    }
+  
+    const normalizedDate = normalizeDate(date);
+    console.log('Clicked date:', normalizedDate.toISOString()); // Log clicked date to check format
+  
+    const index = selected.findIndex(
+      (selectedDate) => normalizeDate(selectedDate).toISOString() === normalizedDate.toISOString()
+    );
+  
+    let updatedSelectedDates;
+    if (index !== -1) {
+      // Date already selected, remove it
+      updatedSelectedDates = [...selected];
+      updatedSelectedDates.splice(index, 1);
+    } else {
+      // Date not selected, add it
+      updatedSelectedDates = [...selected, normalizedDate];
+    }
+    setSelected(updatedSelectedDates);
+  };
+  
   return (
     <div className="col-md-6">
       <label htmlFor="selectDate" className="form-label">
@@ -81,14 +55,22 @@ function CustomCalendar({ selectedDates, setSelectedDates, unavailableDates = []
       </label>
       <div className="custom-calendar-wrapper">
         <DatePicker
-             selected={null}
-             onChange={() => {}}
-             onSelect={handleDateClick}
-             dayClassName={date => getDateClass(date)}
-             minDate={today}
-             maxDate={threeMonthsLater}
-             inline
-             required
+          selected={null}
+          onChange={() => {}}
+          onSelect={handleDateClick}
+          dayClassName={(date) =>
+            isUnavailableDate(date)
+              ? 'unavailable-date'
+              : selected.some(
+                  (selectedDate) =>
+                    selectedDate.toISOString().split('T')[0] === date.toISOString().split('T')[0]
+                )
+              ? 'selected-date'
+              : ''
+          }
+          minDate={today}
+          maxDate={threeMonthsLater}
+          inline
         />
       </div>
     </div>

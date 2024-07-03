@@ -11,6 +11,8 @@ function CombinedForm() {
   const [totalPrice, setTotalPrice] = useState(50000);
   const [withRooms, setWithRooms] = useState(false); // Set default value to false
   const [unavailableDates, setUnavailableDates] = useState([]);
+  const [isPrivateEvent, setIsPrivateEvent] = useState(null);    
+  const [otherEvent, setOtherEvent] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -24,7 +26,7 @@ function CombinedForm() {
     numPersonsNeedingRoom: 0, // Set default value to 0
     roomType: 'AC', // Set default value to 'AC'
     numRoomsNeeded: 0,
-    selectedRooms: [] // Added selectedRooms state for room selection
+    selectedRooms: [], // Added selectedRooms state for room selection
   });
 
   useEffect(() => {
@@ -68,16 +70,36 @@ function CombinedForm() {
       alert('Please select a room type.');
       return;
     }
-  
+   
+    // const bookingData = {
+    //   ...formData,
+    //   selectedDates: selectedDates.map(date => date.toISOString()), // Convert dates to ISO string
+    //   unavailableDates: unavailableDates.map(date => date.toISOString()),
+    //   totalPrice: totalPrice, // Ensure all fields are sent
+    //   numDays: numDays,
+    //   numGuests: numGuests,
+    //   withRooms: withRooms,
+    //   isPrivateEvent,
+    //   otherEvent,
+    // };
+    const normalizeDate = (date) => {
+      const normalizedDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+      return normalizedDate;
+    };
+    
+    // Use normalizeDate function before saving to MongoDB
     const bookingData = {
       ...formData,
-      selectedDates: selectedDates.map(date => new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString()),
-      unavailableDates: unavailableDates.map(date => new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString()),
+      selectedDates: selectedDates.map(date => normalizeDate(date).toISOString()), // Convert dates to ISO string
+      unavailableDates: unavailableDates.map(date => normalizeDate(date).toISOString()),
       totalPrice: totalPrice, // Ensure all fields are sent
       numDays: numDays,
       numGuests: numGuests,
       withRooms: withRooms,
+      isPrivateEvent,
+      otherEvent,
     };
+    
     console.log("bookingData", bookingData);
 
     try {
@@ -208,28 +230,91 @@ function CombinedForm() {
                 <label htmlFor="contactNumber" className="form-label">Contact Number*</label>
                 <input type="tel" className="form-control" id="contactNumber" value={formData.contactNumber} onChange={handleInputChange} required />
               </div>
+              <div className="col-md-6">
+  <label htmlFor="event" className="form-lab">Select Event Type*</label>
+  <div className="event-type-container">
+    <div>
+      <div className="form-check">
+        <input
+          className="form-check-input"
+          type="radio"
+          id="privateEvent"
+          checked={isPrivateEvent === true}
+          onChange={() => setIsPrivateEvent(true)}
+        />
+        <label className="form-check-label" htmlFor="privateEvent">Functions</label>
+      </div>
+      <div className="form-check">
+        <input
+          className="form-check-input"
+          type="radio"
+          id="publicEvent"
+          checked={isPrivateEvent === false}
+          onChange={() => setIsPrivateEvent(false)}
+        />
+        <label className="form-check-label" htmlFor="publicEvent">Official</label>
+      </div>
+      <div className="form-check">
+        <input
+          className="form-check-input"
+          type="radio"
+          id="otherEventRadio"
+          checked={isPrivateEvent === 'other'}
+          onChange={() => setIsPrivateEvent('other')}
+        />
+        <label className="form-check-label" htmlFor="otherEventRadio">Others</label>
+      </div>
+    </div>
+    {isPrivateEvent === 'other' && (
+      <input
+        type="text"
+        id="otherEvent"
+        className="form-control event-select"
+        placeholder="Enter event type"
+        value={otherEvent}
+        onChange={(e) => setOtherEvent(e.target.value)}
+        required
+      />
+    )}
+    {isPrivateEvent !== 'other' && isPrivateEvent !== null && (
+      <select
+        id="event"
+        className="form-control event-select"
+        value={formData.event}
+        onChange={handleInputChange}
+        required
+      >
+        <option value="" disabled>Select an event</option>
+        {isPrivateEvent
+          ? <>
+              <option value="Birthday party">Birthday party</option>
+              <option value="Meeting">Meeting</option>
+              <option value="Baby Shower">Baby Shower</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Engagement">Engagement</option>
+              <option value="Reception">Reception</option>
+            </>
+          : <>
+              <option value="political">Political Meetings</option>
+              <option value="business">Business Meetings</option>
+              <option value="conference">Conferences</option>
+              <option value="shows">Shows</option>
+              <option value="">Workshoworkshops</option>
+              
+            </>
+        }
+      </select>
+    )}
+  </div>
               <CustomCalendar
                 selectedDates={selectedDates}
                 setSelectedDates={setSelectedDates}
                 unavailableDates={unavailableDates}
               />
-              <div className="col-md-6">
-                <label htmlFor="event" className="form-label">Select Event*</label>
-                <select
-                  id="event"
-                  className="form-control"
-                  value={formData.event}
-                  onChange={handleInputChange}
-                >
-                  <option value="" disabled>Select an event</option>
-                  <option value="Wedding">Wedding</option>
-                  <option value="Engagement">Engagement</option>
-                  <option value="Reception">Reception</option>
-                  <option value="Birthday party">Birthday party</option>
-                  <option value="Meeting">Meeting</option>
-                  <option value="Baby Shower">Baby Shower</option>
-                </select>
-              </div>
+                                                                                                        <div className="col-md-6">
+ 
+  </div>
+</div>
               <div className="col-md-12">
                 <label htmlFor="services" className="form-label">Our Services</label>
                 <div className="form-check">

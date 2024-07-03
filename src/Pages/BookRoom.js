@@ -36,15 +36,19 @@ function FormWithRooms() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
+    const normalizedSelectedDates = selectedDates.map(date => new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString().split('T')[0]);
+  
     const bookingData = {
       ...formData,
-      selectedDates,
+      selectedDates: normalizedSelectedDates,
       numGuests,
       numDays,
       totalPrice
     };
-    console.log(formData);
+  
+    console.log(bookingData);
+  
     try {
       const response = await fetch('http://localhost:5000/api/halls', {
         method: 'POST',
@@ -53,7 +57,7 @@ function FormWithRooms() {
         },
         body: JSON.stringify(bookingData)
       });
-
+  
       if (response.ok) {
         alert('Reservation submitted successfully!');
         navigate("/payment");
@@ -65,7 +69,7 @@ function FormWithRooms() {
       alert('An error occurred while submitting the form. Please check the console for more details.');
     }
   };
-
+  
   const handleInputChange = (event) => {
     const { id, value } = event.target;
 
@@ -182,6 +186,7 @@ function FormWithRooms() {
                 setSelectedDates={setSelectedDates}
                 formData={formData}
                 setFormData={setFormData}
+                
               />
               <div className="col-md-6">
                 <label htmlFor="numDays" className="form-label">Number of Days</label>
