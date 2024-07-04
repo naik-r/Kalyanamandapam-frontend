@@ -9,33 +9,33 @@ function CustomCalendar({ selectedDates, setSelectedDates, unavailableDates = []
   useEffect(() => {
     setSelectedDates(selected);
   }, [selected, setSelectedDates]);
+
   const today = new Date();
   const threeMonthsLater = new Date();
   threeMonthsLater.setMonth(today.getMonth() + 3);
+
   const normalizeDate = (date) => {
-    const normalizedDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    return normalizedDate;
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   };
-  
+
   const isUnavailableDate = (date) => {
     return unavailableDates.some(
-      (unavailableDate) =>
-        normalizeDate(unavailableDate).toISOString().split('T')[0] === normalizeDate(date).toISOString().split('T')[0]
+      (unavailableDate) => normalizeDate(unavailableDate).getTime() === normalizeDate(date).getTime()
     );
   };
-  
+
   const handleDateClick = (date) => {
     if (isUnavailableDate(date)) {
       return;
     }
-  
+
     const normalizedDate = normalizeDate(date);
     console.log('Clicked date:', normalizedDate.toISOString()); // Log clicked date to check format
-  
+
     const index = selected.findIndex(
-      (selectedDate) => normalizeDate(selectedDate).toISOString() === normalizedDate.toISOString()
+      (selectedDate) => normalizeDate(selectedDate).getTime() === normalizedDate.getTime()
     );
-  
+
     let updatedSelectedDates;
     if (index !== -1) {
       // Date already selected, remove it
@@ -47,7 +47,7 @@ function CustomCalendar({ selectedDates, setSelectedDates, unavailableDates = []
     }
     setSelected(updatedSelectedDates);
   };
-  
+
   return (
     <div className="col-md-6">
       <label htmlFor="selectDate" className="form-label">
@@ -63,7 +63,7 @@ function CustomCalendar({ selectedDates, setSelectedDates, unavailableDates = []
               ? 'unavailable-date'
               : selected.some(
                   (selectedDate) =>
-                    selectedDate.toISOString().split('T')[0] === date.toISOString().split('T')[0]
+                    normalizeDate(selectedDate).getTime() === normalizeDate(date).getTime()
                 )
               ? 'selected-date'
               : ''

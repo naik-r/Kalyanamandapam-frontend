@@ -4,6 +4,8 @@ import CustomCalendar from './CustomCalendar';
 import './Form.css'; // Assuming you have saved the CSS in a file named Form.css
 
 function CombinedForm() {
+  const [bookedRooms, setBookedRooms] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [selectedDates, setSelectedDates] = useState([]);
   const [numGuests, setNumGuests] = useState(0); // Set default value to 0
@@ -11,7 +13,7 @@ function CombinedForm() {
   const [totalPrice, setTotalPrice] = useState(50000);
   const [withRooms, setWithRooms] = useState(false); // Set default value to false
   const [unavailableDates, setUnavailableDates] = useState([]);
-  const [isPrivateEvent, setIsPrivateEvent] = useState(null);    
+  const [isPrivateEvent, setIsPrivateEvent] = useState(null);
   const [otherEvent, setOtherEvent] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
@@ -32,7 +34,7 @@ function CombinedForm() {
   useEffect(() => {
     fetchUnavailableDates();
   }, []);
-   
+
   const fetchUnavailableDates = async () => {
     try {
       const response = await fetch('http://localhost:5000/api/onlyhall/unavailable-dates');
@@ -70,7 +72,7 @@ function CombinedForm() {
       alert('Please select a room type.');
       return;
     }
-   
+
     // const bookingData = {
     //   ...formData,
     //   selectedDates: selectedDates.map(date => date.toISOString()), // Convert dates to ISO string
@@ -86,7 +88,7 @@ function CombinedForm() {
       const normalizedDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
       return normalizedDate;
     };
-    
+
     // Use normalizeDate function before saving to MongoDB
     const bookingData = {
       ...formData,
@@ -99,11 +101,11 @@ function CombinedForm() {
       isPrivateEvent,
       otherEvent,
     };
-    
+
     console.log("bookingData", bookingData);
 
     try {
-      const url = 'http://localhost:5000/api/onlyhall'; 
+      const url = 'http://localhost:5000/api/onlyhall';
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -176,6 +178,7 @@ function CombinedForm() {
 
   // Calculate number of rooms needed based on persons needing room
   const calculateNumRoomsNeeded = (personsNeedingRoom) => {
+
     const roomsNeeded = Math.ceil(personsNeedingRoom / 2);
     setFormData(prevData => ({
       ...prevData,
@@ -186,31 +189,116 @@ function CombinedForm() {
   };
 
   // Handle room selection
-  const handleRoomSelection = (roomNumber) => {
-    const { selectedRooms, numRoomsNeeded } = formData;
+  const handleRoomSelection = (date, roomNumber) => {
+    const dateStr = date.toDateString();
+    const selectedRoomForDate = formData.selectedRooms.find(room => room.date === dateStr);
     let updatedSelectedRooms;
 
-    if (selectedRooms.includes(roomNumber)) {
-      // Remove room number if already selected
-      updatedSelectedRooms = selectedRooms.filter(room => room !== roomNumber);
-    } else if (selectedRooms.length < numRoomsNeeded) {
-      // Add room number if less than numRoomsNeeded rooms selected
-      updatedSelectedRooms = [...selectedRooms, roomNumber];
+    if (selectedRoomForDate) {
+      if (selectedRoomForDate.rooms.includes(roomNumber)) {
+        updatedSelectedRooms = formData.selectedRooms.map(room =>
+          room.date === dateStr
+            ? { ...room, rooms: room.rooms.filter(r => r !== roomNumber) }
+            : room
+        );
+      } else if (selectedRoomForDate.rooms.length < formData.numRoomsNeeded) {
+        updatedSelectedRooms = formData.selectedRooms.map(room =>
+          room.date === dateStr
+            ? { ...room, rooms: [...room.rooms, roomNumber] }
+            : room
+        );
+      } else {
+        updatedSelectedRooms = formData.selectedRooms;
+      }
     } else {
-      // Already at max rooms selected
-      updatedSelectedRooms = selectedRooms;
+      updatedSelectedRooms = [...formData.selectedRooms, { date: dateStr, rooms: [roomNumber] }];
     }
 
-    // Update formData state with updated selected rooms
     setFormData(prevState => ({
       ...prevState,
-      selectedRooms: updatedSelectedRooms
+      selectedRooms: updatedSelectedRooms,
     }));
 
-    // Log selected rooms to console
-    console.log("Selected Rooms:", updatedSelectedRooms);
+    console.log('Selected Rooms:', updatedSelectedRooms);
   };
 
+  const fetchBookedRooms = async date => {
+    const dateStr = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString().split('T')[0];
+    console.log('Fetching rooms for date:', dateStr);
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:5000/api/booked-rooms?date=${dateStr}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setBookedRooms(prevRooms => ({
+        ...prevRooms,
+        [dateStr]: data
+      }));
+      console.log('Fetched booked rooms:', data);
+    } catch (error) {
+      console.error('Error fetching booked rooms:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const roomOptions = date => {
+    const { numPersonsNeedingRoom } = formData;
+    const numRoomsNeeded = Math.ceil(numPersonsNeedingRoom / 2);
+    const dateStr = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString().split('T')[0];
+
+    const bookedRoomsForDate = bookedRooms[dateStr] || [];
+    const selectedRoomsForDate = formData.selectedRooms.find(room => room.date === date.toDateString())?.rooms || [];
+
+    return [...Array(10)].map((_, index) => {
+      const roomNumber = index + 1;
+      const isRoomAlreadyBooked = bookedRoomsForDate.includes(roomNumber);
+      const isRoomSelected = selectedRoomsForDate.includes(roomNumber);
+      const isDisabled = selectedRoomsForDate.length >= numRoomsNeeded && !isRoomSelected;
+
+      let optionClass = 'room-option';
+      if (isRoomAlreadyBooked) {
+        optionClass += ' booked';
+      }
+      if (isRoomSelected) {
+        optionClass += ' selected';
+      }
+      if (isDisabled || isRoomAlreadyBooked) {
+        optionClass += ' disabled';
+      }
+
+      return (
+        <div
+          key={roomNumber}
+          className={optionClass}
+          onClick={() => !isDisabled && !isRoomAlreadyBooked && handleRoomSelection(date, roomNumber)}
+        >
+          G {roomNumber}
+        </div>
+      );
+    });
+  };
+
+  useEffect(() => {
+    if (selectedDates) {
+      for (let i = 0; i < selectedDates.length; i++) {
+        fetchBookedRooms(selectedDates[i]);
+      }
+    }
+  }, [selectedDates]);
+  
+
+  const handleChange = (selectedDate) => {
+    if(!selectedDates[0]){
+      alert("Please Select The Date!")
+    }
+    else{
+    setWithRooms(true);
+    roomOptions(selectedDates[0]);
+    }
+  };
   return (
     <div id="imgbg" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/image/gt2.jpg)` }}>
       <div id="avail" className="containerf">
@@ -231,90 +319,90 @@ function CombinedForm() {
                 <input type="tel" className="form-control" id="contactNumber" value={formData.contactNumber} onChange={handleInputChange} required />
               </div>
               <div className="col-md-6">
-  <label htmlFor="event" className="form-lab">Select Event Type*</label>
-  <div className="event-type-container">
-    <div>
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="radio"
-          id="privateEvent"
-          checked={isPrivateEvent === true}
-          onChange={() => setIsPrivateEvent(true)}
-        />
-        <label className="form-check-label" htmlFor="privateEvent">Functions</label>
-      </div>
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="radio"
-          id="publicEvent"
-          checked={isPrivateEvent === false}
-          onChange={() => setIsPrivateEvent(false)}
-        />
-        <label className="form-check-label" htmlFor="publicEvent">Official</label>
-      </div>
-      <div className="form-check">
-        <input
-          className="form-check-input"
-          type="radio"
-          id="otherEventRadio"
-          checked={isPrivateEvent === 'other'}
-          onChange={() => setIsPrivateEvent('other')}
-        />
-        <label className="form-check-label" htmlFor="otherEventRadio">Others</label>
-      </div>
-    </div>
-    {isPrivateEvent === 'other' && (
-      <input
-        type="text"
-        id="otherEvent"
-        className="form-control event-select"
-        placeholder="Enter event type"
-        value={otherEvent}
-        onChange={(e) => setOtherEvent(e.target.value)}
-        required
-      />
-    )}
-    {isPrivateEvent !== 'other' && isPrivateEvent !== null && (
-      <select
-        id="event"
-        className="form-control event-select"
-        value={formData.event}
-        onChange={handleInputChange}
-        required
-      >
-        <option value="" disabled>Select an event</option>
-        {isPrivateEvent
-          ? <>
-              <option value="Birthday party">Birthday party</option>
-              <option value="Meeting">Meeting</option>
-              <option value="Baby Shower">Baby Shower</option>
-              <option value="Wedding">Wedding</option>
-              <option value="Engagement">Engagement</option>
-              <option value="Reception">Reception</option>
-            </>
-          : <>
-              <option value="political">Political Meetings</option>
-              <option value="business">Business Meetings</option>
-              <option value="conference">Conferences</option>
-              <option value="shows">Shows</option>
-              <option value="">Workshoworkshops</option>
-              
-            </>
-        }
-      </select>
-    )}
-  </div>
-              <CustomCalendar
-                selectedDates={selectedDates}
-                setSelectedDates={setSelectedDates}
-                unavailableDates={unavailableDates}
-              />
-                                                                                                        <div className="col-md-6">
- 
-  </div>
-</div>
+                <label htmlFor="event" className="form-lab">Select Event Type*</label>
+                <div className="event-type-container">
+                  <div>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        id="privateEvent"
+                        checked={isPrivateEvent === true}
+                        onChange={() => setIsPrivateEvent(true)}
+                      />
+                      <label className="form-check-label" htmlFor="privateEvent">Functions</label>
+                    </div>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        id="publicEvent"
+                        checked={isPrivateEvent === false}
+                        onChange={() => setIsPrivateEvent(false)}
+                      />
+                      <label className="form-check-label" htmlFor="publicEvent">Official</label>
+                    </div>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        id="otherEventRadio"
+                        checked={isPrivateEvent === 'other'}
+                        onChange={() => setIsPrivateEvent('other')}
+                      />
+                      <label className="form-check-label" htmlFor="otherEventRadio">Others</label>
+                    </div>
+                  </div>
+                  {isPrivateEvent === 'other' && (
+                    <input
+                      type="text"
+                      id="otherEvent"
+                      className="form-control event-select"
+                      placeholder="Enter event type"
+                      value={otherEvent}
+                      onChange={(e) => setOtherEvent(e.target.value)}
+                      required
+                    />
+                  )}
+                  {isPrivateEvent !== 'other' && isPrivateEvent !== null && (
+                    <select
+                      id="event"
+                      className="form-control event-select"
+                      value={formData.event}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="" disabled>Select an event</option>
+                      {isPrivateEvent
+                        ? <>
+                          <option value="Birthday party">Birthday party</option>
+                          <option value="Meeting">Meeting</option>
+                          <option value="Baby Shower">Baby Shower</option>
+                          <option value="Wedding">Wedding</option>
+                          <option value="Engagement">Engagement</option>
+                          <option value="Reception">Reception</option>
+                        </>
+                        : <>
+                          <option value="political">Political Meetings</option>
+                          <option value="business">Business Meetings</option>
+                          <option value="conference">Conferences</option>
+                          <option value="shows">Shows</option>
+                          <option value="">Workshoworkshops</option>
+
+                        </>
+                      }
+                    </select>
+                  )}
+                </div>
+                <CustomCalendar
+                  selectedDates={selectedDates}
+                  setSelectedDates={setSelectedDates}
+                  unavailableDates={unavailableDates}
+                />
+                <div className="col-md-6">
+
+                </div>
+              </div>
               <div className="col-md-12">
                 <label htmlFor="services" className="form-label">Our Services</label>
                 <div className="form-check">
@@ -341,8 +429,8 @@ function CombinedForm() {
                     type="radio"
                     name="roomOption"
                     id="withRooms"
-                    checked={withRooms === true}
-                    onChange={() => setWithRooms(true)}
+                    checked={withRooms === true}setWithRooms
+                    onChange={handleChange}
                   />
                   <label className="form-check-label" htmlFor="withRooms">With Rooms</label>
                 </div>
@@ -384,25 +472,29 @@ function CombinedForm() {
                     />
                   </div>
                   {/* Room selection */}
-                  <div className="col-md-12">
+                  {/* <div className="col-md-12">
                     <h6 className="form-label">Select Room Numbers*</h6>
                     <div className="room-select-container">
-                      {[...Array(10)].map((_, index) => {
-                        const roomNumber = index + 1;
-                        const isRoomSelected = formData.selectedRooms.includes(roomNumber);
-                        const isDisabled = formData.selectedRooms.length >= formData.numRoomsNeeded && !isRoomSelected;
-                        return (
-                          <div
-                            key={roomNumber}
-                            className={`room-opt ${isRoomSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
-                            onClick={() => !isDisabled && handleRoomSelection(roomNumber)}
-                          >
+                          <div>
                             G {roomNumber}
                           </div>
                         );
-                      })}
+
                     </div>
-                  </div>
+                  </div> */}
+                   {selectedDates.length > 0 && (
+              <div className="selected-dates-rooms">
+                <h4></h4>
+                <div>
+                  {selectedDates.map((date, index) => (
+                    <div key={index} className="room-options">
+                      <h5>{date.toDateString()}</h5>
+                      <div className="room-options-grid">{roomOptions(date)}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
                 </>
               )}
               <div className="col-md-12">

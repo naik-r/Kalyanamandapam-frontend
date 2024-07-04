@@ -1,67 +1,3 @@
-.unavailable-date {
-  background-color: red;
-  border-radius: 50%;
-  cursor:not-allowed !important;
-
-}
-
-
-.selected-date {
-  background-color: rgb(81, 77, 77) !important;
-  color: white !important;
-}
-
-.room-option.booked {
-  background-color: rgb(255, 0, 0);
-  color: black;
-  cursor: not-allowed;
-}
-/* Custom.css */
-.private-event {
-  background-color: red;
-  border-radius: 50%;
-  cursor:not-allowed !important;
-
-}
-
-/* Container for input field and calendar icon */
-.input-container {
-  position: relative;
-  width: auto; /* Adjust the container width as needed */
-}
-
-/* Styling for the calendar icon */
-.calendar-ic {
-  position: absolute;
-  top: 40%;
-  transform: translateY(-50%);
-  right: 380px; /* Adjust as needed */
-  cursor: pointer;
-  z-index: 2; /* Ensure the icon is above the input */
-}
-
-/* Input field styling */
-.form-control {
-  width: 100%;
-  padding-right: 30px; /* Reserve space for the icon */
-  position: relative;
-  z-index: 1; /* Ensure the input is above the icon */
-}
-
-/* Specific styling for the Select Dates input field */
-.select-dates-inp {
-  width: 350px; /* Adjust width as needed */
-}
-
-/* Styling for the date picker wrapper */
-.react-datepicker-wrapper {
-  position: absolute;
-  width: auto; /* Adjust width as needed */
-  top: 100%;
-  left: 0;
-  z-index: 10; /* Ensure the calendar dropdown is above other content */
-}
-
 /* Main container for the custom calendar */
 .custom-calendar-wrapper {
   display: flex;
@@ -118,6 +54,13 @@
   color: white;
 }
 
+/* Styling for booked room option */
+.room-option.booked {
+  background-color: rgb(255, 0, 0);
+  color: black;
+  cursor: not-allowed;
+}
+
 /* Styling for disabled room option */
 .room-option.disabled {
   cursor: not-allowed;
@@ -129,12 +72,7 @@
 }
 
 /* Custom styles for unavailable and private event dates */
-.unavailable-date {
-  background-color: red;
-  border-radius: 50%;
-  cursor: not-allowed !important;
-}
-
+.unavailable-date,
 .private-event {
   background-color: red;
   border-radius: 50%;

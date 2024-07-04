@@ -279,3 +279,126 @@ a:hover {
 }
 
 
+/* Main container for the custom calendar */
+.custom-calendar-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Container for calendar and room selection */
+.calendar-room-container {
+  display: flex;
+  flex-direction: row; /* Align calendar and room selection horizontally */
+  align-items: flex-start;
+}
+
+/* Container for selected dates and rooms */
+.selected-dates-rooms {
+  display: flex;
+  flex-wrap: nowrap; /* Prevent wrapping to the next line */
+  overflow-x: auto; /* Enable horizontal scrolling if necessary */
+  margin-left: 20px; /* Adjust spacing between calendar and room selection */
+}
+
+/* Individual room options container for each date */
+.room-options {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px; /* Adjust spacing between each date column */
+}
+
+/* Grid layout for room selection */
+.room-options-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* Five columns */
+  gap: 20px;
+}
+
+/* Individual room option styling */
+.room-option {
+  width: 50px; /* Adjust width as needed */
+  height: 50px; /* Adjust height as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid #DAA520;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover and selection */
+}
+
+/* Styling for selected room option */
+.room-option.selected {
+  background-color: gray;
+  color: white;
+}
+
+/* Styling for booked room option */
+.room-option.booked {
+  background-color: rgb(255, 0, 0);
+  color: black;
+  cursor: not-allowed;
+}
+
+/* Styling for disabled room option */
+.room-option.disabled {
+  cursor: not-allowed;
+}
+
+/* Hover effect for room options */
+.room-option:hover:not(.selected):not(.disabled) {
+  background-color: #f8f8f8;
+}
+
+/* Custom styles for unavailable and private event dates */
+.unavailable-date,
+.private-event {
+  background-color: red;
+  border-radius: 50%;
+  cursor: not-allowed !important;
+}
+
+.selected-date {
+  background-color: rgb(81, 77, 77) !important;
+  color: white !important;
+}
+
+/* Container for input field and calendar icon */
+.input-container {
+  position: relative;
+  width: auto; /* Adjust the container width as needed */
+}
+
+/* Styling for the calendar icon */
+.calendar-ic {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  right: 380px; /* Adjust as needed */
+  cursor: pointer;
+  z-index: 2; /* Ensure the icon is above the input */
+}
+
+/* Input field styling */
+.form-control {
+  width: 100%;
+  padding-right: 30px; /* Reserve space for the icon */
+  position: relative;
+  z-index: 1; /* Ensure the input is above the icon */
+}
+
+/* Specific styling for the Select Dates input field */
+.select-dates-inp {
+  width: 350px; /* Adjust width as needed */
+}
+
+/* Styling for the date picker wrapper */
+.react-datepicker-wrapper {
+  position: absolute;
+  width: auto; /* Adjust width as needed */
+  top: 100%;
+  left: 0;
+  z-index: 10; /* Ensure the calendar dropdown is above other content */
+}

@@ -86,6 +86,7 @@ function CustomCalendar({ selectedDates, setSelectedDates, formData, setFormData
   };
 
   const handleDateChange = async date => {
+    console.log('fetchiiiiiiiiiiiiiiiiiiiiinhhhhhhhhhhhhhh')
     await fetchBookedRooms(date);
 
     const index = selectedDates.findIndex(selectedDate =>
